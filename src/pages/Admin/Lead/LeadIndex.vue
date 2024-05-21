@@ -64,9 +64,7 @@ watch(() => store.allLeadsSelected, () => {
                     <TableHeaderCell>Seguimiento</TableHeaderCell>
                     <TableHeaderCell>Status</TableHeaderCell>
                     <TableHeaderCell>Teléfono</TableHeaderCell>
-                    <TableHeaderCell>Teléfono Secundario</TableHeaderCell>
                     <TableHeaderCell>Correo Electrónico</TableHeaderCell>
-                    <TableHeaderCell>Correo Electrónico Secundario</TableHeaderCell>
                     <TableHeaderCell>Carrera de interés</TableHeaderCell>
                     <TableHeaderCell>Grado escolar</TableHeaderCell>
                     <TableHeaderCell>Escuela de procedencia</TableHeaderCell>
@@ -93,13 +91,14 @@ watch(() => store.allLeadsSelected, () => {
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
-                    <TableDataCell></TableDataCell>
+                    <TableDataCell>{{ lead.information.followUpId }}</TableDataCell>
+                    <TableDataCell>{{ lead.information.enrollmentStatus }}</TableDataCell>
                     <TableDataCell>{{ lead.phones[0] }}</TableDataCell>
-                    <TableDataCell></TableDataCell>
                     <TableDataCell>{{ lead.emails[0] }}</TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
+                    <TableDataCell>{{ lead.information.careerInterest }}</TableDataCell>
                     <TableDataCell>{{ lead.grade }}</TableDataCell>
+                    <TableDataCell>{{ lead.information.formerSchool }}</TableDataCell>
+                    <TableDataCell>{{ lead.information.typeSchool }}</TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
@@ -108,13 +107,18 @@ watch(() => store.allLeadsSelected, () => {
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell>
+                    <TableDataCell class="flex flex-col gap-2 text-center">
 
                         <router-link 
-                            :to="{ path: '/admin/campaigns/' + lead.id + '/edit/' }"
+                            title="Mostrar datos"
+                            :to="{ path: '/admin/leads/' + lead.id + '/show'}"
+                            class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
+                        >
+                            <i class="bi bi-eye-fill"></i>
+                        </router-link>
+
+                        <router-link 
+                            :to="{ path: '/admin/leads/' + lead.id + '/edit/' }"
                             class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
                         >
                             <i class="bi bi-pencil-square"></i>
