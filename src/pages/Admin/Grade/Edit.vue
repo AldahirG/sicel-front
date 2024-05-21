@@ -1,87 +1,78 @@
-<script>
-import axios from 'axios';
+<script setup>
+import { inject , onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import DashboardLayout from '../../../layouts/DashboardLayout.vue';
+import grade from '../../../services/grade.service';
+
 import FormContainer from '../../../components/FormContainer.vue';
-import InputLabel from '../../../components/InputLabel.vue';
-import TextInput from '../../../components/TextInput.vue';
 
-// URL de API
-const url = import.meta.env.VITE_API_URL;
+const toast = inject('toast');
+const route = useRoute();
+const router = useRouter();
 
-export default {
-    components: {
-        DashboardLayout,
-        FormContainer,
-        InputLabel,
-        TextInput,
-    },
-    data() {
-        return {
-            grade: {
-                name: '',
-            },
+const { id } = route.params;
 
-            // Paths for breadcrumbs
-            bread: [
-                { label: "Dashboard", name: 'admin' },
-                { label: "Grados escolares", name: 'admin/grades' },
-                { label: "Editar", name: "editGrade" }
-            ]
+const form = ref({
+    name: '',
+});
+
+const handleSubmit = async (form) => {
+    try {
+        const { data } = await grade.update(id, form);
+        const message = data.http.message;
+
+        toast.open({
+            message: message,
+            type: 'success'
+        })
+
+        router.push({ name: 'admin/grades'})
+    
+    } catch (error) {
+        toast.open({
+            message: error.response.data.message,
+            type: 'error'
+        })
+    }
+}
+
+onMounted(async () => {
+    try {
+        const { data } = await grade.getById(id);
+        form.value = {
+            name: data.data.name,
         };
-    },
-    methods: {
-        getgrade(id) {
-            axios.get(`${url}/grade/${id}`)
-                .then(res => {
-                    this.grade.name = res.data.name;
-                });
-        },
-        async update() {
-            const id = this.$route.params.id;
+    } catch (error) {
+        router.push({ name: 'admin/grades' })
+    }
+})
 
-            try {
-                await axios.put(`${url}/grade/${id}`, this.grade);
-                this.$router.push("/admin/grades");
-            } catch (error) {
-                console.error('Error al actualizar el grado:', error);
-            }
-        },
-    },
-    created() {
-        const id = this.$route.params.id;
-        this.getgrade(id);
-    },
-};
+
 </script>
 
 <template>
-    <DashboardLayout :breadcrumbs="bread">
-        <FormContainer>
-            <form @submit.prevent="update">
-                <div class="mt-4 mb-4">
-                    <InputLabel for="name" value="Nombre del grado escolar" />
-                    <TextInput 
-                        id="name" 
-                        v-model="grade.name" 
-                        type="text" 
-                        class="mt-1 block w-full"
-                        placeholder="Ingrese el nombre del grado escolar" 
-                        autocomplete="name" 
-                        autofocus 
-                    />
-                </div>
+    <FormContainer>
+        <FormKit 
+            id="edit" 
+            type="form"
+            v-model="form"
+            :actions="false"
+            incomplete-message="Lo sentimos hubo un error al editar el grado escolar." 
+            @submit="handleSubmit"
+        >
+            <FormKit 
+                type="text" 
+                label="Grado escolar"
+                name="name"
+                placeholder="Ingresa un grado escolar"
+                validation="required|length:3" 
+                :validation-messages="{
+                  required: 'El grado escolar es obligatorio.',
+                  length: 'El nombre del grado escolar es muy corto.'
+                }"
+            />
 
-                <div class="flex justify-end">
-                    <button 
-                        type="submit"
-                        class="py-2 px-4 text-white bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
-                    >
-                        Editar
-                    </button>
-                </div>
-
-            </form>
-        </FormContainer>
-    </DashboardLayout>
+            <FormKit type="submit">Guardar</FormKit>
+        </FormKit>
+    </FormContainer>
 </template>
