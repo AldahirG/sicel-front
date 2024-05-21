@@ -3,8 +3,15 @@ import { useRouter } from "vue-router"
 import { defineAsyncComponent, inject, ref, onMounted } from 'vue';
 import { reset } from "@formkit/vue"
 
-import user from '../../../services/user.service';
-import { useRolesStore } from '../../../store/Admin/roles';
+import lead from '../../../services/lead.service';
+import { LeadResource } from "./mapper/lead.mapper";
+
+import { useFollowUpsStore } from '../../../store/Admin/followUp';
+import { useGradesStore } from '../../../store/Admin/grades';
+import { useAsetNamesStore } from '../../../store/Admin/asetNames';
+import { useCampaignsStore } from '../../../store/Admin/campaigns';
+import { useCitiesStore } from '../../../store/Admin/cities';
+import { useCyclesStore } from '../../../store/Admin/cycles';
 
 const FormContainer = defineAsyncComponent(() =>
   import('../../../components/FormContainer.vue')
@@ -13,34 +20,67 @@ const FormContainer = defineAsyncComponent(() =>
 const toast = inject('toast');
 const router = useRouter();
 
-const store = useRolesStore();
-const roles = ref([]);
+const followUpStore = useFollowUpsStore();
+const followUps = ref([]);
 
-const handleSubmit = async ({password_confirm, ...form}) => {
+const gradeStore = useGradesStore();
+const grades = ref([]);
+
+const asetNameStore = useAsetNamesStore();
+const asetNames = ref([]);
+
+const campaignStore = useCampaignsStore();
+const campaigns = ref([]);
+
+const cityStore = useCitiesStore();
+const cities = ref([]);
+
+const cycleStore = useCyclesStore();
+const cycles = ref([]);
+
+const handleSubmit = async (form) => {
   try {
-    const { data } = await user.create(form);
+    
+    const mapper = LeadResource(form);
+
+    const { data } = await lead.create(mapper);
     const message = data.http.message;
 
     toast.open({
       message: message,
       type: 'success'
-    })
+    });
 
-    reset('registerUser');
+    reset('register');
 
-    router.push({ name: 'admin/users'})
-    
+    router.push({ name: 'admin/leads' });
+
   } catch (error) {
     toast.open({
       message: error.response.data.message,
       type: 'error'
-    })
+    });
   }
-}
+};
 
 onMounted(async () => {
-    await store.getAll();
-    roles.value = store.roles;
+    await followUpStore.getAll();
+    followUps.value = followUpStore.followUps;
+
+    await gradeStore.getAll();
+    grades.value = gradeStore.grades;
+
+    await asetNameStore.getAll();
+    asetNames.value = asetNameStore.asetNames;
+
+    await campaignStore.getAll();
+    campaigns.value = campaignStore.campaigns;
+
+    await cityStore.getAll();
+    cities.value = cityStore.cities;
+
+    await cycleStore.getAll();
+    cycles.value = cycleStore.cycles;
 });
 
 </script>
@@ -72,8 +112,8 @@ onMounted(async () => {
         name="genre"
         placeholder="Selecciona un sexo"
         :options="[
-          'FEMENINO',
-          'MASCULINO',
+          'HOMBRE',
+          'MUJER',
         ]"
       />
 
@@ -98,11 +138,7 @@ onMounted(async () => {
             label="Seguimiento"
             name="followUpId"
             placeholder="Selecciona un seguimiento"
-            :options="[
-              'INS',
-              'INSO',
-              'REZA',
-            ]"
+            :options="followUps.map(followUp => ({ label: followUp.name, value: followUp.id }))"
           />
         </div>
       </div>
@@ -110,13 +146,8 @@ onMounted(async () => {
       <FormKit
         type="tel"
         label="Teléfono"
-        name="tel"
-        placeholder="Ingresa un número de teléfono (xxx-xxx-xxxx)"
-        validation="required|length:10"
-        :validation-messages="{
-          required: 'El número de teléfono es obligatorio.',
-          length: 'El número de teléfono tiene que ser igual o mayor a 10 dígitos.'
-        }"
+        name="phone"
+        placeholder="Ingresa un número de teléfono"
       />
 
       <FormKit
@@ -124,11 +155,6 @@ onMounted(async () => {
         label="Correo electrónico"
         name="email"
         placeholder="Ingresa un correo electrónico"
-        validation="required|email"
-        :validation-messages="{
-          required: 'El correo electrónico es obligatorio.',
-          email: 'Correo electrónico no válido.'
-        }"
       />
 
       <div class="flex gap-4">
@@ -147,11 +173,7 @@ onMounted(async () => {
             label="Grado escolar"
             name="grade"
             placeholder="Selecciona un grado escolar"
-            :options="[
-              'INS',
-              'INSO',
-              'REZA',
-            ]"
+            :options="grades.map(grade => ({ label: grade.name, value: grade.id }))"
           />
         </div>
       </div>
@@ -192,35 +214,20 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="flex gap-4">
-        <div class="w-1/2">
-          <FormKit
-            type="select"
-            label="Aset Name"
-            name="asetNameId"
-            placeholder="Selecciona un aset name"
-            :options="[
-              'PUBLICA',
-              'PRIVADA',
-            ]"
-          />
-        </div>
-
-        <div class="w-1/2">
-          <span>Medio de contacto: </span>
-        </div>
-      </div>
+      <FormKit
+        type="select"
+        label="Medio de contacto"
+        name="asetNameId"
+        placeholder="Selecciona un medio de contacto"
+        :options="asetNames.map(asetName => ({ label: [asetName.contactType.name + ' - ' + asetName.name], value: asetName.id }))"
+      />
 
       <FormKit
         type="select"
         label="Campaña"
         name="campaignId"
         placeholder="Selecciona una campaña"
-        :options="[
-          'INS',
-          'INSO',
-          'REZA',
-        ]"
+        :options="campaigns.map(campaign => ({ label: campaign.name, value: campaign.id }))"
       />
 
       <FormKit
@@ -228,11 +235,7 @@ onMounted(async () => {
         label="Ciudad"
         name="cityId"
         placeholder="Selecciona una ciudad"
-        :options="[
-          'INS',
-          'INSO',
-          'REZA',
-        ]"
+        :options="cities.map(city => ({ label: city.name, value: city.id }))"
       />
 
       <div class="flex gap-4">
@@ -242,10 +245,7 @@ onMounted(async () => {
             label="Ciclo escolar"
             name="cycleId"
             placeholder="Selecciona un ciclo escolar"
-            :options="[
-              'PUBLICA',
-              'PRIVADA',
-            ]"
+            :options="cycles.map(cycle => ({ label: cycle.cycle, value: cycle.id }))"
           />
         </div>
 
