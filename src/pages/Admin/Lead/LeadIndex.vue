@@ -1,6 +1,6 @@
 <script setup>
 import { defineAsyncComponent, onMounted, ref, watch } from "vue";
-import { useLeadsStore } from "../../../store/Admin/leads";
+import lead from '../../../services/lead.service'
 
 import CreateButton from "../../../components/CreateButton.vue";
 import Checkbox from "../../../components/Checkbox.vue";
@@ -11,32 +11,15 @@ const Table = defineAsyncComponent(() =>
     import('../../../components/Table.vue')
 );
 
-const store = useLeadsStore();
 const leads = ref([]);
 
-const selectedLeadIds = store.selectedLeadIds;
-const selectAllChecked = ref(false);
-
-const selectAllLeads = () => {
-    selectAllChecked.value = !selectAllChecked.value;
-    store.selectAllLeads(selectAllChecked.value);
-};
-
-const updateSelectAll = () => {
-    selectAllChecked.value = store.allLeadsSelected;
-};
-
-const updateSelectedLeadIds = () => {
-    store.updateSelectedLeadIds();
-};
-
 onMounted(async () => {
-    await store.getAll();
-    leads.value = store.leads;
-});
-
-watch(() => store.allLeadsSelected, () => {
-    selectAllChecked.value = store.allLeadsSelected;
+    try {
+        const response = await lead.getAll();
+        leads.value = response.data.data;
+    } catch (error) {
+        console.error("Error al obtener los leads:", error);
+    }
 });
 
 </script>
@@ -84,8 +67,7 @@ watch(() => store.allLeadsSelected, () => {
                 <TableRow v-for="lead in leads" :key="lead.id">
                     <TableDataCell>
                         <Checkbox 
-                            v-model="lead.selected" 
-                            @change="updateSelectedLeadIds" 
+                            
                         />
                     </TableDataCell>
                     <TableDataCell></TableDataCell>
@@ -118,7 +100,7 @@ watch(() => store.allLeadsSelected, () => {
                         </router-link>
 
                         <router-link 
-                            :to="{ path: '/admin/leads/' + lead.id + '/edit/' }"
+                            :to="{ path: '/admin/leads/' + lead.id + '/edit' }"
                             class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
                         >
                             <i class="bi bi-pencil-square"></i>
