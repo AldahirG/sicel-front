@@ -24,7 +24,7 @@ export const LeadResource = (form) => {
             enrollmentStatus,
             followUpId,
         },
-        email: [email],
-        phone: [phone],
+        email: email ? [email] : [],
+        phone: phone ? [phone] : [],
     };
 };

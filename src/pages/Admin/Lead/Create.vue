@@ -171,7 +171,7 @@ onMounted(async () => {
           <FormKit
             type="select"
             label="Grado escolar"
-            name="grade"
+            name="gradeId"
             placeholder="Selecciona un grado escolar"
             :options="grades.map(grade => ({ label: grade.name, value: grade.id }))"
           />
