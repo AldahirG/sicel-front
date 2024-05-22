@@ -13,6 +13,8 @@ import { useCampaignsStore } from '../../../store/Admin/campaigns';
 import { useCitiesStore } from '../../../store/Admin/cities';
 import { useCyclesStore } from '../../../store/Admin/cycles';
 
+import InputGroup from "../../../components/InputGroup.vue";
+import FormRow from "../../../components/FormRow.vue";
 const FormContainer = defineAsyncComponent(() =>
   import('../../../components/FormContainer.vue')
 );
@@ -117,8 +119,8 @@ onMounted(async () => {
         ]"
       />
 
-      <div class="flex gap-4">
-        <div class="w-1/2">
+      <InputGroup>
+        <FormRow>
           <FormKit
             type="select"
             label="Status"
@@ -130,9 +132,9 @@ onMounted(async () => {
               'REZA',
             ]"
           />
-        </div>
+        </FormRow>
 
-        <div class="w-1/2">
+        <FormRow>
           <FormKit
             type="select"
             label="Seguimiento"
@@ -140,8 +142,8 @@ onMounted(async () => {
             placeholder="Selecciona un seguimiento"
             :options="followUps.map(followUp => ({ label: followUp.name, value: followUp.id }))"
           />
-        </div>
-      </div>
+        </FormRow>
+      </InputGroup>
 
       <FormKit
         type="tel"
@@ -157,17 +159,17 @@ onMounted(async () => {
         placeholder="Ingresa un correo electrónico"
       />
 
-      <div class="flex gap-4">
-        <div class="w-1/2">
+      <InputGroup>
+        <FormRow>
           <FormKit
             type="text"
             label="Carrera de interés"
             name="careerInterest"
             placeholder="Ingresa la carrera de interés"
           />
-        </div>
+        </FormRow>
 
-        <div class="w-1/2">
+        <FormRow>
           <FormKit
             type="select"
             label="Grado escolar"
@@ -175,8 +177,8 @@ onMounted(async () => {
             placeholder="Selecciona un grado escolar"
             :options="grades.map(grade => ({ label: grade.name, value: grade.id }))"
           />
-        </div>
-      </div>
+        </FormRow>
+      </InputGroup>
 
       <FormKit
         type="select"
@@ -190,17 +192,17 @@ onMounted(async () => {
         ]"
       />
 
-      <div class="flex gap-4">
-        <div class="w-1/2">
+      <InputGroup>
+        <FormRow>
           <FormKit
             type="text"
             label="Escuela de procedencia"
             name="formerSchool"
             placeholder="Ingresa la escuela de procedencia"
           />
-        </div>
+        </FormRow>
 
-        <div class="w-1/2">
+        <FormRow>
           <FormKit
             type="select"
             label="Tipo de escuela"
@@ -211,8 +213,8 @@ onMounted(async () => {
               'PRIVADA',
             ]"
           />
-        </div>
-      </div>
+        </FormRow>
+      </InputGroup>
 
       <FormKit
         type="select"
@@ -238,8 +240,8 @@ onMounted(async () => {
         :options="cities.map(city => ({ label: city.name, value: city.id }))"
       />
 
-      <div class="flex gap-4">
-        <div class="w-1/2">
+      <InputGroup>
+        <FormRow>
           <FormKit
             type="select"
             label="Ciclo escolar"
@@ -247,9 +249,9 @@ onMounted(async () => {
             placeholder="Selecciona un ciclo escolar"
             :options="cycles.map(cycle => ({ label: cycle.cycle, value: cycle.id }))"
           />
-        </div>
+        </FormRow>
 
-        <div class="w-1/2">
+        <FormRow>
           <FormKit
             type="select"
             label="Semestre de ingreso"
@@ -260,8 +262,8 @@ onMounted(async () => {
               'PRIVADA',
             ]"
           />
-        </div>
-      </div>
+        </FormRow>
+      </InputGroup>
 
       <FormKit type="submit">Guardar</FormKit>
     </FormKit>
