@@ -112,8 +112,8 @@ onMounted(async () => {
         name="genre"
         placeholder="Selecciona un sexo"
         :options="[
-          'HOMBRE',
-          'MUJER',
+          'FEMENINO',
+          'MASCULINO',
         ]"
       />
 
