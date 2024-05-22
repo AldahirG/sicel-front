@@ -91,14 +91,14 @@ watch(() => store.allLeadsSelected, () => {
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
-                    <TableDataCell>{{ lead.information.followUpId }}</TableDataCell>
-                    <TableDataCell>{{ lead.information.enrollmentStatus }}</TableDataCell>
+                    <TableDataCell>{{ lead.information.followUp?.name }}</TableDataCell>
+                    <TableDataCell>{{ lead.information?.enrollmentStatus }}</TableDataCell>
                     <TableDataCell>{{ lead.phones[0] }}</TableDataCell>
                     <TableDataCell>{{ lead.emails[0] }}</TableDataCell>
-                    <TableDataCell>{{ lead.information.careerInterest }}</TableDataCell>
-                    <TableDataCell>{{ lead.grade }}</TableDataCell>
-                    <TableDataCell>{{ lead.information.formerSchool }}</TableDataCell>
-                    <TableDataCell>{{ lead.information.typeSchool }}</TableDataCell>
+                    <TableDataCell>{{ lead.information?.careerInterest }}</TableDataCell>
+                    <TableDataCell>{{ lead.grade?.name }}</TableDataCell>
+                    <TableDataCell>{{ lead.information?.formerSchool }}</TableDataCell>
+                    <TableDataCell>{{ lead.information?.typeSchool }}</TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
