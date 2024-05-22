@@ -1,8 +1,11 @@
 import api from "../lib/axios";
 
 export default {
+    getAll() {
+        return api.get('/cycles')
+    },
     getById(id) {
-        return api.get(`cycles/${id}`)
+        return api.get(`/cycles/${id}`)
     },
     create(data) {
         return api.post('/cycles', data)
