@@ -1,4 +1,3 @@
-// formTransformer.js
 export const LeadResource = (form) => {
     const {
         name,
