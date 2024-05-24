@@ -150,6 +150,11 @@ onMounted(async () => {
         label="Teléfono"
         name="phone"
         placeholder="Ingresa un número de teléfono"
+        validation="required|length:10"
+        :validation-messages="{
+          required: 'El número de teléfono es obligatorio.',
+          length: 'Ingresa un número de teléfono válido.'
+        }"
       />
 
       <FormKit
@@ -157,6 +162,11 @@ onMounted(async () => {
         label="Correo electrónico"
         name="email"
         placeholder="Ingresa un correo electrónico"
+        validation="required|email"
+        :validation-messages="{
+          required: 'El correo electrónico es obligatorio.',
+          length: 'Ingresa un correo electrónico válido.'
+        }"
       />
 
       <InputGroup>
@@ -186,9 +196,24 @@ onMounted(async () => {
         name="scholarship"
         placeholder="Selecciona una beca"
         :options="[
-          'INS',
-          'INSO',
-          'REZA',
+          '0', 
+          '10', 
+          '15', 
+          '20', 
+          '25', 
+          '30', 
+          '35', 
+          '40', 
+          '45', 
+          '50', 
+          '55', 
+          '60', 
+          '70',
+          '80', 
+          '90', 
+          '100', 
+          'APOYO TRABAJADOR', 
+          'ORFANDAD',
         ]"
       />
 
@@ -255,11 +280,19 @@ onMounted(async () => {
           <FormKit
             type="select"
             label="Semestre de ingreso"
-            name="cycleId"
+            name="semester"
             placeholder="Selecciona un semestre de ingreso"
             :options="[
-              'PUBLICA',
-              'PRIVADA',
+              '1',
+              '2',
+              '3',
+              '4',
+              '5',
+              '6',
+              '7',
+              '8',
+              '9',
+              '10',
             ]"
           />
         </FormRow>
