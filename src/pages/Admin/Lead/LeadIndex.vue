@@ -82,11 +82,11 @@ onMounted(async () => {
                     <TableDataCell>{{ lead.information?.formerSchool }}</TableDataCell>
                     <TableDataCell>{{ lead.information?.typeSchool }}</TableDataCell>
                     <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
+                    <TableDataCell>{{ lead.asetName?.name }}</TableDataCell>
+                    <TableDataCell>{{ lead.campaign?.name }}</TableDataCell>
+                    <TableDataCell>{{ lead.address?.country }}</TableDataCell>
+                    <TableDataCell>{{ lead.address?.state }}</TableDataCell>
+                    <TableDataCell>{{ lead.address?.city }}</TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">

@@ -1,6 +1,48 @@
 <script setup>
+import { inject , onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+import leadService from '../../../services/lead.service';
+
 import BentoItem from '../../../components/BentoItem.vue';
 import BentoItemTitle from '../../../components/BentoItemTitle.vue';
+import BentoList from "../../../components/BentoList.vue";
+
+const route = useRoute();
+
+const { id } = route.params;
+
+const lead = ref({});
+
+onMounted(async () => {
+    try {
+        const { data } = await leadService.getById(id);
+        lead.value = {
+            name: data.data.information.name,
+            phones: data.data.phones,
+            emails: data.data.emails,
+            country: data.data.address.country,
+            state: data.data.address.state,
+            city: data.data.address.city,
+            genre: data.data.information.genre,
+
+            careerInterest: data.data.information.careerInterest,
+            grade: data.data.grade.name,
+            // cycle: data.data.cycle.cycle,
+            formerSchool: data.data.information.formerSchool,
+            typeSchool: data.data.information.typeSchool,
+
+            asetName: data.data.asetName.name,
+            campaign: data.data.campaign.name,
+
+            enrollmentStatus: data.data.information.enrollmentStatus,
+            followUp: data.data.information.followUp.name,
+            
+        };
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 </script>
 
@@ -38,16 +80,13 @@ import BentoItemTitle from '../../../components/BentoItemTitle.vue';
             </BentoItemTitle>
 
             <ul class="py-4 space-y-3">
-                <li><span>Nombre completo:</span> </li>
-                <li><span>Teléfono:</span> </li>
-                <li><span>Teléfono (Opcional):</span> </li>
-                <li><span>Correo electrónico:</span> </li>
-                <li><span>Correo electrónico (Opcional):</span> </li>
-                <li><span>País:</span> </li>
-                <li><span>Estado:</span> </li>
-                <li><span>Ciudad:</span> </li>
-                <li><span>Fecha de nacimiento:</span> </li>
-                <li><span>Sexo: </span> </li>
+                <BentoList field="Nombre">{{ lead.name }}</BentoList>
+                <BentoList field="Telefónos">{{ lead.phones }}</BentoList>
+                <BentoList field="Correo electrónico">{{ lead.emails }}</BentoList>
+                <BentoList field="País">{{ lead.country }}</BentoList>
+                <BentoList field="Estado">{{ lead.state }}</BentoList>
+                <BentoList field="Ciudad">{{ lead.city }}</BentoList>
+                <BentoList field="Sexo">{{ lead.genre }}</BentoList>
             </ul>
         </BentoItem>
 
@@ -57,13 +96,12 @@ import BentoItemTitle from '../../../components/BentoItemTitle.vue';
             </BentoItemTitle>
 
             <ul class="py-4 space-y-3">
-                <li><span>Carrera de interés:</span> </li>
-                <li><span>Grado escolar:</span> </li>
-                <li><span>Programa:</span> </li>
-                <li><span>Ciclo escolar:</span> </li>
-                <li><span>Escuela de procedencia:</span> </li>
-                <li><span>Tipo de escuela:</span> </li>
-                <li><span>Beca ofrecida:</span> </li>
+                <BentoList field="Carrera de interés">{{ lead.careerInterest }}</BentoList>
+                <BentoList field="Grado escolar">{{ lead.grade }}</BentoList>
+                <BentoList field="Ciclo escolar">{{ lead.cycle }}</BentoList>
+                <BentoList field="Escuela de procedencia">{{ lead.formerSchool }}</BentoList>
+                <BentoList field="Tipo de escuela">{{ lead.typeSchool }}</BentoList>
+                <BentoList field="Escuela de procedencia">{{ lead.formerSchool }}</BentoList>
             </ul>
         </BentoItem>
 
@@ -74,8 +112,8 @@ import BentoItemTitle from '../../../components/BentoItemTitle.vue';
 
             <ul class="py-4 space-y-3">
                 <li><span>Medio:</span> </li>
-                <li><span>AsetNameForm:</span> </li>
-                <li><span>Campaña:</span> </li>
+                <BentoList field="Aset Name">{{ lead.asetName }}</BentoList>
+                <BentoList field="Campaña">{{ lead.campaign }}</BentoList>
             </ul>
         </BentoItem>
 
@@ -88,23 +126,6 @@ import BentoItemTitle from '../../../components/BentoItemTitle.vue';
                 <li><span>Tipo de referido:</span> </li>
                 <li><span>Nombre de referido:</span> </li>
                 <li><span>Donde obtuvo el dato:</span> </li>
-            </ul>
-        </BentoItem>
-
-        <BentoItem colSpan="col-span-10 lg:col-span-10">
-            <BentoItemTitle>
-                <i class="bi bi-award-fill mr-2"></i> Datos inscripción
-            </BentoItemTitle>
-
-            <ul class="py-4 space-y-3">
-                <li><span>Fecha de inscripción:</span> </li>
-                <li><span>Beca:</span> </li>
-                <li><span>Promoción de inscripción:</span> </li>
-                <li><span>Comisión:</span> </li>
-                <li><span>Matrícula:</span> </li>
-                <li><span>No. recibo:</span> </li>
-                <li><span>Lista:</span> </li>
-                <li><span>Estrategia:</span> </li>
             </ul>
         </BentoItem>
 
@@ -122,9 +143,3 @@ import BentoItemTitle from '../../../components/BentoItemTitle.vue';
         </section>
 
 </template>
-
-<style>
-span {
-    font-weight: 600;
-}
-</style>
