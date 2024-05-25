@@ -1,8 +1,10 @@
 <script setup>
-import { defineAsyncComponent, inject , onMounted, ref } from "vue";
+import { inject , onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import lead from '../../../services/lead.service';
+import { LeadResource } from "./mapper/lead.mapper";
+
 import followUp from '../../../services/followUp.service';
 import grade from '../../../services/grade.service';
 import asetName from '../../../services/asetName.service';
@@ -12,9 +14,7 @@ import cycle from '../../../services/cycle.service';
 
 import InputGroup from "../../../components/InputGroup.vue";
 import FormRow from "../../../components/FormRow.vue";
-const FormContainer = defineAsyncComponent(() =>
-    import('../../../components/FormContainer.vue')
-);
+import FormContainer from '../../../components/FormContainer.vue';
 
 const toast = inject('toast');
 const route = useRoute();
@@ -29,42 +29,32 @@ const campaigns = ref([]);
 const cities = ref([]);
 const cycles = ref([]);
 
-const form = ref({
-    name: '',
-    genre: '',
-    careerInterest: '',
-    formerSchool: '',
-    typeSchool: '',
-    enrollmentStatus: '',
-    followUpId: '',
-    gradeId: '',
-    phones: [''],
-    emails: [''],
-    campaignId: '',
-    asetNameId: '',
-    cityId: '',
-    cycleId: '',
-});
+const form = ref({});
 
 const handleSubmit = async (form) => {
     try {
-        const { data } = await lead.update(id, form);
+    
+        const mapper = LeadResource(form);
+
+        const { data } = await lead.update(id, mapper);
         const message = data.http.message;
 
         toast.open({
             message: message,
             type: 'success'
-        })
+        });
 
-        router.push({ name: 'admin/leads'})
-    
+        reset('register');
+
+        router.push({ name: 'admin/leads' });
+
     } catch (error) {
         toast.open({
             message: error.response.data.message,
             type: 'error'
-        })
+        });
     }
-}
+};
 
 onMounted(async () => {
     try {
@@ -92,22 +82,22 @@ onMounted(async () => {
             genre: data.data.information.genre,
             enrollmentStatus: data.data.information.enrollmentStatus,
             followUpId: data.data.information.followUp.id,
+            phone: data.data.phones,
+            email: data.data.emails,
             careerInterest: data.data.information.careerInterest,
+            gradeId: data.data.grade.id,
+            scholarship: data.data.scholarship,
             formerSchool: data.data.information.formerSchool,
             typeSchool: data.data.information.typeSchool,
-            gradeId: data.data.grade.id,
-            phones: data.data.phones,
-            emails: data.data.emails,
-            campaignId: data.data.campaign.id,
             asetNameId: data.data.asetName.id,
-            cityId: data.data.address.city,
-            cycleId: data.data.cycle,
+            campaignId: data.data.campaign.id,
+            cityId: data.data.address.country.id,
+            semester: data.data.semester,
         };
     } catch (error) {
         router.push({ name: 'admin/leads' })
     }
 })
-
 
 </script>
 
@@ -173,14 +163,14 @@ onMounted(async () => {
             <FormKit
                 type="tel"
                 label="Teléfono"
-                name="phones"
+                name="phone"
                 placeholder="Ingresa un número de teléfono"
             />
 
             <FormKit
                 type="email"
                 label="Correo electrónico"
-                name="emails"
+                name="email"
                 placeholder="Ingresa un correo electrónico"
             />
 
@@ -211,9 +201,24 @@ onMounted(async () => {
                 name="scholarship"
                 placeholder="Selecciona una beca"
                 :options="[
-                    'INS',
-                    'INSO',
-                    'REZA',
+                    '0', 
+                    '10', 
+                    '15', 
+                    '20', 
+                    '25', 
+                    '30', 
+                    '35', 
+                    '40', 
+                    '45', 
+                    '50', 
+                    '55', 
+                    '60', 
+                    '70',
+                    '80', 
+                    '90', 
+                    '100', 
+                    'APOYO TRABAJADOR', 
+                    'ORFANDAD',
                 ]"
             />
 
@@ -266,7 +271,7 @@ onMounted(async () => {
             />
 
             <InputGroup>
-                <FormRow>
+                <!-- <FormRow>
                     <FormKit
                         type="select"
                         label="Ciclo escolar"
@@ -274,17 +279,25 @@ onMounted(async () => {
                         placeholder="Selecciona un ciclo escolar"
                         :options="cycles.map(cycle => ({ label: cycle.cycle, value: cycle.id }))"
                     />
-                </FormRow>
+                </FormRow> -->
 
                 <FormRow>
                     <FormKit
                         type="select"
                         label="Semestre de ingreso"
-                        name="cycleId"
+                        name="semester"
                         placeholder="Selecciona un semestre de ingreso"
                         :options="[
-                            'PUBLICA',
-                            'PRIVADA',
+                            '1',
+                            '2',
+                            '3',
+                            '4',
+                            '5',
+                            '6',
+                            '7',
+                            '8',
+                            '9',
+                            '10',
                         ]"
                     />
                 </FormRow>
