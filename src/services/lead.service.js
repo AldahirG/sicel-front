@@ -1,8 +1,8 @@
 import api from "../lib/axios";
 
 export default {
-    getAll() {
-        return api.get('/leads')
+    getAll(params) {
+        return api.get('/leads', { params });
     },
     getById(id) {
         return api.get(`/leads/${id}`)
