@@ -23,7 +23,7 @@ export const LeadResource = (form) => {
             enrollmentStatus,
             followUpId,
         },
-        email: email ? [email] : [],
-        phone: phone ? [phone] : [],
+        email: Array.isArray(email) ? email : [email],
+        phone: Array.isArray(phone) ? phone : [phone],
     };
 };
