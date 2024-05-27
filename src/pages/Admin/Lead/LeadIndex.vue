@@ -1,9 +1,10 @@
-<script setup>
-import { defineAsyncComponent, onMounted, ref, watch } from "vue";
+<script>
+import { defineAsyncComponent, onMounted, ref } from "vue";
 import lead from '../../../services/lead.service'
 
 import CreateButton from "../../../components/CreateButton.vue";
 import Checkbox from "../../../components/Checkbox.vue";
+import Pagination from "../../../components/Pagination.vue";
 import TableRow from "../../../components/TableRow.vue";
 import TableHeaderCell from "../../../components/TableHeaderCell.vue";
 import TableDataCell from "../../../components/TableDataCell.vue";
@@ -11,17 +12,60 @@ const Table = defineAsyncComponent(() =>
     import('../../../components/Table.vue')
 );
 
-const leads = ref([]);
+export default {
+    setup() {
+        const leads = ref([]);
+        const currentPage = ref(1);
+        const perPage = ref(10);
+        const totalPages = ref(0);
 
-onMounted(async () => {
-    try {
-        const response = await lead.getAll();
-        leads.value = response.data.data;
-    } catch (error) {
-        console.error("Error al obtener los leads:", error);
-    }
-});
+        const goToPage = async (page) => {
+            if (page < 1) {
+                page = 1;
+            }
+            await fetchLeads(page);
+        }
 
+        const fetchLeads = async (page = 1) => {
+            try {
+                const params = {
+                    paginated: true,
+                    page: page,
+                    'per-page': perPage.value
+                };
+
+                const response = await lead.getAll(params);
+                leads.value = response.data.data;
+                currentPage.value = response.data.meta.currentPage;
+                totalPages.value = response.data.meta.totalPages;
+            } catch (error) {
+                console.error("Error al obtener los leads:", error);
+            }
+        }
+
+        onMounted(async () => {
+            fetchLeads();
+        });
+        
+        return {
+            leads,
+            currentPage,
+            perPage,
+            totalPages,
+            fetchLeads,
+            goToPage,
+        };
+    },
+    components: {
+        CreateButton,
+        Checkbox,
+        TableRow,
+        TableHeaderCell,
+        TableDataCell,
+        Table,
+        Pagination,
+    },
+};
 </script>
 
 <template>
@@ -110,5 +154,8 @@ onMounted(async () => {
                 </TableRow>
             </template>
         </Table>
+
+        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchLeads" />
+
     </section>
 </template>
