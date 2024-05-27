@@ -436,19 +436,7 @@ watchEffect(() => {
         <header
             class="[grid-area:header] h-[60px] px-3 md:px-6 bg-white dark:bg-[#1D232A] border-b border-b-[#d1d0d0] transition-all duration-200 ease-out sticky top-0 z-30"
         >
-            <nav class="flex items-center justify-end md:justify-between h-full w-full">
-                <div class="hidden md:flex flex-row items-center">
-                    <div class="text-gray-900 dark:text-gray-300 text-sm breadcrumbs">
-                        <!-- <ul>
-                            <li v-for="(item, index) in props.breadcrumbs" :key="index">
-                                <router-link :to="{ name: item.name }">
-                                    {{ item.label }}
-                                </router-link>
-                            </li>
-                        </ul> -->
-                    </div>
-                </div>
-
+            <nav class="flex items-center justify-end h-full w-full">
                 <div class="flex flex-row items-center gap-6">
                     <div>
                         <label class="flex cursor-pointer gap-2">
