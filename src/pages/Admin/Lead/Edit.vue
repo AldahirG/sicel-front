@@ -33,7 +33,6 @@ const form = ref({});
 
 const handleSubmit = async (form) => {
     try {
-    
         const mapper = LeadResource(form);
 
         const { data } = await lead.update(id, mapper);
@@ -43,8 +42,6 @@ const handleSubmit = async (form) => {
             message: message,
             type: 'success'
         });
-
-        reset('register');
 
         router.push({ name: 'admin/leads' });
 
@@ -91,7 +88,7 @@ onMounted(async () => {
             typeSchool: data.data.information.typeSchool,
             asetNameId: data.data.asetName.id,
             campaignId: data.data.campaign.id,
-            cityId: data.data.address.country.id,
+            cityId: data.data.address.city.id,
             semester: data.data.semester,
         };
     } catch (error) {
@@ -165,6 +162,13 @@ onMounted(async () => {
                 label="Teléfono"
                 name="phone"
                 placeholder="Ingresa un número de teléfono"
+            />
+
+            <FormKit
+                type="tel"
+                label="Teléfono"
+                name="phone2"
+                placeholder="Ingresa un número de teléfono*"
             />
 
             <FormKit
