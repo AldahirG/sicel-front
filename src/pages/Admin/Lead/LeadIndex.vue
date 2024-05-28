@@ -145,6 +145,14 @@ export default {
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
                         <router-link 
+                            title="Asignar y reasignar promotor"
+                            :to="{ path: '/admin/leads/' + lead.id + '/assignment'}"
+                            class="py-2 px-4 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md duration-200"
+                        >
+                            <i class="bi bi-person-plus-fill"></i>
+                        </router-link>
+
+                        <router-link 
                             title="Mostrar datos"
                             :to="{ path: '/admin/leads/' + lead.id + '/show'}"
                             class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
