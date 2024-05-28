@@ -75,24 +75,25 @@ onMounted(async () => {
 
         const { data } = await lead.getById(id);
         form.value = {
-            name: data.data.information.name,
-            genre: data.data.information.genre,
-            enrollmentStatus: data.data.information.enrollmentStatus,
-            followUpId: data.data.information.followUp.id,
-            phone: data.data.phones,
-            email: data.data.emails,
-            careerInterest: data.data.information.careerInterest,
-            gradeId: data.data.grade.id,
-            scholarship: data.data.scholarship,
-            formerSchool: data.data.information.formerSchool,
-            typeSchool: data.data.information.typeSchool,
-            asetNameId: data.data.asetName.id,
-            campaignId: data.data.campaign.id,
-            cityId: data.data.address.city.id,
-            semester: data.data.semester,
+            name: data.data?.information.name,
+            genre: data.data?.information.genre,
+            enrollmentStatus: data.data?.information.enrollmentStatus,
+            followUpId: data.data?.information?.followUp?.id,
+            phone: data.data?.phones,
+            email: data.data?.emails,
+            careerInterest: data.data?.information.careerInterest,
+            gradeId: data.data?.grade.id,
+            scholarship: data.data?.scholarship,
+            formerSchool: data.data?.information.formerSchool,
+            typeSchool: data.data?.information.typeSchool,
+            asetNameId: data.data?.asetName.id,
+            campaignId: data.data?.campaign.id,
+            cityId: data.data.address.city?.id,
+            semester: data.data?.semester,
         };
     } catch (error) {
-        router.push({ name: 'admin/leads' })
+        console.log(error)
+        // router.push({ name: 'admin/leads' })
     }
 })
 
