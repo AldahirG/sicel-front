@@ -12,5 +12,12 @@ export default {
     },
     update(id, data) {
         return api.patch(`/leads/${id}`, data)
+    },
+    upload(data) {
+        return api.post('/leads/file-share', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     }
 }
