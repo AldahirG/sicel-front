@@ -2,7 +2,7 @@
 import { defineAsyncComponent, onMounted, ref } from "vue";
 import { useUsersStore } from "../../../store/Admin/users";
 
-import CreateButton from "../../../components/CreateButton.vue";
+import Button from "../../../components/Button.vue";
 import TableRow from "../../../components/TableRow.vue";
 import TableHeaderCell from "../../../components/TableHeaderCell.vue";
 import TableDataCell from "../../../components/TableDataCell.vue";
@@ -23,7 +23,7 @@ onMounted(async () => {
 <template>
     <section class="flex items-end justify-end mb-6">
         
-        <CreateButton
+        <Button
             name="createUser"
             label="usuario"
         />

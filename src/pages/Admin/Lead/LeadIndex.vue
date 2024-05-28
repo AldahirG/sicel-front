@@ -2,7 +2,7 @@
 import { defineAsyncComponent, onMounted, ref } from "vue";
 import lead from '../../../services/lead.service'
 
-import CreateButton from "../../../components/CreateButton.vue";
+import Button from "../../../components/Button.vue";
 import Checkbox from "../../../components/Checkbox.vue";
 import Pagination from "../../../components/Pagination.vue";
 import TableRow from "../../../components/TableRow.vue";
@@ -57,7 +57,7 @@ export default {
         };
     },
     components: {
-        CreateButton,
+        Button,
         Checkbox,
         TableRow,
         TableHeaderCell,
@@ -69,9 +69,14 @@ export default {
 </script>
 
 <template>
-    <section class="flex items-end justify-end mb-6">
+    <section class="flex items-end justify-end mb-6 gap-4">
+        <Button 
+            name="createLead" 
+            label="lead"
+            width="w-32"
+        />
 
-        <CreateButton 
+        <Button 
             name="createLead" 
             label="lead"
             width="w-32"
