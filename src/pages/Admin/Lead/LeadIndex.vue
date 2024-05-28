@@ -69,11 +69,15 @@ export default {
 </script>
 
 <template>
-    <section class="flex items-end justify-end mb-6 gap-4">
+    <section class="flex items-end justify-end mb-6 gap-3">
         <Button 
-            name="createLead" 
-            label="lead"
+            name="uploadLead"
+            actionLabel="Subir" 
+            label="CSV"
             width="w-32"
+            icon="bi bi-filetype-csv"
+            background="bg-[#4f6d7a]"
+            borderColor="border-[#4f6d7a]"
         />
 
         <Button 
