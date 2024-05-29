@@ -1,0 +1,19 @@
+import adminGuard from '../../core/guards/roles.guard';
+import { leadRoutes } from './lead.routes';
+
+const ROUTE_NAME = 'promoter';
+
+export const promoterRoutes = [{
+    path: `/${ROUTE_NAME}`,
+    component: () => import('../../layouts/DashboardLayout.vue'),
+    beforeEnter: [ adminGuard ],
+    children: [
+        {
+            path: `/${ROUTE_NAME}`,
+            name: 'promoter',
+            component: () => import('../../pages/Promoter/PromoterIndex.vue'),
+        },
+
+        ...leadRoutes,
+    ]
+}]

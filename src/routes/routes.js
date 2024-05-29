@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { adminRoutes } from "./Admin/admin.routes.js";
+import { promoterRoutes } from "./Promoter/promoter.routes.js";
 import Login from '../pages/Home.vue';
 import authGuard from "../core/guards/auth.guard.js";
 
@@ -28,6 +29,8 @@ const routes = [
     },
     
     ...adminRoutes,
+
+    ...promoterRoutes,
 ]
 
 const router = createRouter({
