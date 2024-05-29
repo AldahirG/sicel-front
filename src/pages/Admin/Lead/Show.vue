@@ -1,6 +1,6 @@
 <script setup>
-import { inject , onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 
 import leadService from '../../../services/lead.service';
 
