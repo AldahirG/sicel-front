@@ -16,4 +16,20 @@ const adminGuard = async (to, from, next) => {
     }
 };
 
-export default adminGuard;
+const promoterGuard = async (to, from, next) => {
+    try {
+        const authStore = useAuthStore();
+        const roles = await authStore.getAuthUser();
+
+        if (roles.includes('Promotor')) {
+            next();
+        } else {
+            next({ name: 'Unauthorized' });
+        }
+    } catch (error) {
+        console.error('Error al obtener los roles del usuario:', error);
+        next({ name: 'Unauthorized' });
+    }
+};
+
+export { adminGuard, promoterGuard };
