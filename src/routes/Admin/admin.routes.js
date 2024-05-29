@@ -1,4 +1,4 @@
-import adminGuard from '../../core/guards/roles.guard';
+import { adminGuard } from '../../core/guards/roles.guard';
 import { userRoutes } from './user.routes';
 import { careerRoutes } from './career.routes';
 import { campaignRoutes } from './campaign.routes';
