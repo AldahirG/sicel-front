@@ -18,25 +18,25 @@ onMounted(async () => {
     try {
         const { data } = await leadService.getById(id);
         lead.value = {
-            name: data.data.information.name,
-            phones: data.data.phones,
-            emails: data.data.emails,
-            country: data.data.address.country,
-            state: data.data.address.state,
-            city: data.data.address.city,
-            genre: data.data.information.genre,
+            name: data.data.information?.name,
+            phones: data.data?.phones,
+            emails: data.data?.emails,
+            country: data.data.address?.country,
+            state: data.data.address?.state,
+            city: data.data.address?.city,
+            genre: data.data.information?.genre,
 
-            careerInterest: data.data.information.careerInterest,
-            grade: data.data.grade.name,
+            careerInterest: data.data.information?.careerInterest,
+            grade: data.data.grade?.name,
             // cycle: data.data.cycle.cycle,
-            formerSchool: data.data.information.formerSchool,
-            typeSchool: data.data.information.typeSchool,
+            formerSchool: data.data.information?.formerSchool,
+            typeSchool: data.data.information?.typeSchool,
 
-            asetName: data.data.asetName.name,
-            campaign: data.data.campaign.name,
+            asetName: data.data.asetName?.name,
+            campaign: data.data.campaign?.name,
 
-            enrollmentStatus: data.data.information.enrollmentStatus,
-            followUp: data.data.information.followUp.name,
+            enrollmentStatus: data.data.information?.enrollmentStatus,
+            followUp: data.data.information.followUp?.name,
             
         };
     } catch (error) {
