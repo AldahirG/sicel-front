@@ -10,17 +10,17 @@ export const leadRoutes = [{
         },
         {
             path: 'create',
-            name: 'createLead',
+            name: 'createLeadPromotor',
             component: () => import('../../pages/Promoter/Lead/Create.vue'),
         },
         {
             path: ':id/edit',
-            name: 'editLead',
+            name: 'editLeadPromotor',
             component: () => import('../../pages/Promoter/Lead/Edit.vue'),
         },
         {
             path: ':id/show',
-            name: 'showLead',
+            name: 'showLeadPromotor',
             component: () => import('../../pages/Promoter/Lead/Show.vue'),
         },
     ]
