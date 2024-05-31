@@ -1,6 +1,9 @@
 import api from "../lib/axios";
 
 export default {
+    getAll(params) {
+        return api.get('/users', { params });
+    },
     getById(id) {
         return api.get(`users/${id}`)
     },
@@ -9,5 +12,5 @@ export default {
     },
     update(id, data) {
         return api.patch(`/users/${id}`, data)
-    }
+    },
 }
