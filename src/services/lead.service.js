@@ -19,5 +19,8 @@ export default {
                 'Content-Type': 'multipart/form-data'
             }
         });
+    },
+    assignment(id, userId) {
+        return api.patch(`/leads/${id}/assignment/${userId}`);
     }
 }
