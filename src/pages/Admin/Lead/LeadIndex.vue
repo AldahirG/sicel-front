@@ -124,7 +124,7 @@ export default {
                         />
                     </TableDataCell>
                     <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
+                    <TableDataCell>{{ lead.promoter.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.followUp?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information?.enrollmentStatus }}</TableDataCell>
