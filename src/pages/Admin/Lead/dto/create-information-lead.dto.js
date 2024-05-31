@@ -29,7 +29,10 @@ export const CreateInformationLeadDto = (data) => {
             phones,
             emails,
             address,
-            promoter
+            promoter: {
+                id: userId,
+                name: userName,
+            }
         },
     } = data;
 
@@ -56,6 +59,7 @@ export const CreateInformationLeadDto = (data) => {
         phones,
         emails,
         address,
-        promoter,
+        userId,
+        userName,
     };
 };
