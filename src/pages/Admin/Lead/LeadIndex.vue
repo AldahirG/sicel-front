@@ -4,6 +4,7 @@ import lead from '../../../services/lead.service'
 
 import Button from "../../../components/Button.vue";
 import Checkbox from "../../../components/Checkbox.vue";
+import Dropdown from "../../../components/Dropdown.vue";
 import Pagination from "../../../components/Pagination.vue";
 import TableRow from "../../../components/TableRow.vue";
 import TableHeaderCell from "../../../components/TableHeaderCell.vue";
@@ -43,26 +44,6 @@ export default {
             }
         }
 
-        const assignmentClass = (lead) => {
-            if (lead.promoter.id == null) {
-                return 'text-green-600 dark:text-green-400';
-            } else if (lead.dateContact == null || lead.information.followUp.id == null) {
-                return 'text-indigo-600 dark:text-indigo-400';
-            } else {
-                return 'text-red-600 dark:text-red-400';
-            }
-        };
-
-        const assignmentText = (lead) => {
-            if (lead.promoter.id == null) {
-                return 'Asignar';
-            } else if (lead.dateContact == null || lead.information.followUp.id == null) {
-                return 'Reasignar';
-            } else {
-                return 'En seguimiento';
-            }
-        };
-
         onMounted(async () => {
             fetchLeads();
         });
@@ -74,13 +55,12 @@ export default {
             totalPages,
             goToPage,
             fetchLeads,
-            assignmentClass,
-            assignmentText,
         };
     },
     components: {
         Button,
         Checkbox,
+        Dropdown,
         TableRow,
         TableHeaderCell,
         TableDataCell,
@@ -147,12 +127,7 @@ export default {
                         />
                     </TableDataCell>
 
-                    <TableDataCell
-                        class="font-semibold"
-                        :class="assignmentClass(lead)"
-                    >
-                        {{ assignmentText(lead) }}
-                    </TableDataCell>
+                    <TableDataCell></TableDataCell>
                     <TableDataCell class="">{{ lead.promoter.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.followUp?.name }}</TableDataCell>
@@ -176,28 +151,30 @@ export default {
                     </TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
-                        <router-link 
-                            title="Asignar y reasignar promotor"
-                            :to="{ path: '/admin/leads/' + lead.id + '/assignment'}"
-                            class="py-2 px-4 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md duration-200"
-                        >
-                            <i class="bi bi-person-plus-fill"></i>
-                        </router-link>
+                        <Dropdown> 
+                            <router-link 
+                                title="Asignar y reasignar promotor"
+                                :to="{ path: '/admin/leads/' + lead.id + '/assignment'}"
+                                class="py-2 px-4 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md duration-200"
+                            >
+                                <i class="bi bi-person-plus-fill"></i>
+                            </router-link>
 
-                        <router-link 
-                            title="Mostrar datos"
-                            :to="{ path: '/admin/leads/' + lead.id + '/show'}"
-                            class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
-                        >
-                            <i class="bi bi-eye-fill"></i>
-                        </router-link>
+                            <router-link 
+                                title="Mostrar datos"
+                                :to="{ path: '/admin/leads/' + lead.id + '/show'}"
+                                class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
+                            >
+                                <i class="bi bi-eye-fill"></i>
+                            </router-link>
 
-                        <router-link 
-                            :to="{ path: '/admin/leads/' + lead.id + '/edit' }"
-                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
-                        >
-                            <i class="bi bi-pencil-square"></i>
-                        </router-link>
+                            <router-link 
+                                :to="{ path: '/admin/leads/' + lead.id + '/edit' }"
+                                class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                            </router-link>
+                        </Dropdown>
 
                     </TableDataCell>
                 </TableRow>
