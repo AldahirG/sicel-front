@@ -59,14 +59,14 @@ onMounted(async () => {
             type="form"
             v-model="form"
             :actions="false"
-            incomplete-message="Lo sentimos hubo un error al editar la campaña." 
+            incomplete-message="Lo sentimos hubo un error al editar la campaign_name." 
             @submit="handleSubmit"
         >
             <FormKit 
                 type="text" 
-                label="Nombre"
+                label="Campaign_name"
                 name="name"
-                placeholder="Ingresa un nombre"
+                placeholder="Ingresa un campaign_name"
                 validation="required|length:3" 
                 :validation-messages="{
                     required: 'El nombre es obligatorio.',
@@ -80,8 +80,8 @@ onMounted(async () => {
                 name="type"
                 placeholder="Selecciona un tipo de campaña"
                 :options="[
-                'PAUTA',
-                'ORGANICA',
+                    'PAUTA',
+                    'ORGANICA',
                 ]"
                 validation="required"
                 :validation-messages="{

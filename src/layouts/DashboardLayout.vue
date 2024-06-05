@@ -243,7 +243,7 @@ watchEffect(() => {
                             :class="is_expanded ? 'opacity-100' : 'opacity-0'"
                             class="transition-all duration-200 ease-in-out"
                         >
-                            Campañas
+                            Campaign_name
                         </span>
                     </SideBarLink>
                 </li>

@@ -25,7 +25,8 @@ onMounted(async () => {
         
         <Button
             name="createCampaign"
-            label="campaña"
+            label="campaign_name"
+            width="w-48"
         />
     </section>
 

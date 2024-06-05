@@ -42,14 +42,14 @@ const handleSubmit = async (form) => {
       id="create"
       type="form"
       :actions="false"
-      incomplete-message="Lo sentimos hubo un error al crear la campaña."
+      incomplete-message="Lo sentimos hubo un error al crear la campaign_name."
       @submit="handleSubmit"
     >
       <FormKit
         type="text"
-        label="Nombre"
+        label="Campign_name"
         name="name"
-        placeholder="Ingresa un nombre"
+        placeholder="Ingresa un campaign_name"
         validation="required|length:3"
         :validation-messages="{
           required: 'El nombre es obligatorio.',
