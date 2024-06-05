@@ -1,5 +1,7 @@
 import './style.css';
 import '../node_modules/bootstrap-icons/font/bootstrap-icons.css';
+import "vue-toast-notification/dist/theme-sugar.css"
+import '@github/relative-time-element'
 
 import { createApp, markRaw } from 'vue';
 import { createPinia } from 'pinia';
@@ -9,8 +11,6 @@ import config from '../formkit.config';
 
 import App from './App.vue';
 import router from './routes/routes';
-
-import "vue-toast-notification/dist/theme-sugar.css"
 
 const toast = useToast({
     duration: 3000,
