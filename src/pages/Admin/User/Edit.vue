@@ -55,6 +55,7 @@ onMounted(async () => {
             paternalSurname: data.data.paternalSurname,
             maternalSurname: data.data.maternalSurname,
             email: data.data.email,
+            roles: data.data.roles,
         };
     } catch (error) {
         router.push({ name: 'admin/users' })
@@ -138,7 +139,7 @@ onMounted(async () => {
                 }" 
             />
 
-            <!-- <FormKit 
+            <FormKit 
                 type="checkbox" 
                 label="Roles" 
                 name="roles" 
@@ -158,7 +159,7 @@ onMounted(async () => {
                         message: 'text-red-500 text-sm my-3',
                     },
                 }" 
-            /> -->
+            />
 
             <FormKit type="submit">Guardar</FormKit>
         </FormKit>
