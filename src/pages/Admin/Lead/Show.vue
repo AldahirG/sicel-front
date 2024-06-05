@@ -21,7 +21,7 @@ onMounted(async () => {
             name: data.data.information?.name,
             phones: data.data?.phones,
             emails: data.data?.emails,
-            country: data.data.address?.country,
+            country: data.data.address.country?.name,
             state: data.data.address?.state,
             city: data.data.address?.city,
             genre: data.data.information?.genre,
