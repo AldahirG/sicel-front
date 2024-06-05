@@ -135,6 +135,7 @@ export default {
                     <TableHeaderCell>Ciudad</TableHeaderCell>
                     <TableHeaderCell>Ciclo</TableHeaderCell>
                     <TableHeaderCell>Tipo de referido</TableHeaderCell>
+                    <TableHeaderCell>Última modificación</TableHeaderCell>
                     <TableHeaderCell>Acciones</TableHeaderCell>
                 </TableRow>
             </template>
@@ -170,6 +171,9 @@ export default {
                     <TableDataCell>{{ lead.address?.city }}</TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
+                    <TableDataCell>
+                        <relative-time :datetime="lead.updateAt" tense="past"> Ultimos cambios </relative-time>
+                    </TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
                         <router-link 
