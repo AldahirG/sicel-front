@@ -1,6 +1,6 @@
 <template>
     <div class="relative overflow-x-auto pb-6">
-        <table class="w-full text-sm text-left text-gray-500">
+        <table class="w-full text-sm text-left text-gray-500 overflow-hidden">
             <thead class="text-xs text-white capitalize bg-sky-800">
                 <slot name="header" />
             </thead>
