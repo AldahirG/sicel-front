@@ -89,6 +89,7 @@ onMounted(async () => {
             asetNameId: data.data?.asetName.id,
             campaignId: data.data?.campaign.id,
             cityId: data.data.address.city?.id,
+            cycleId: data.data.cycle.id,
             semester: data.data?.semester,
         };
     } catch (error) {
@@ -276,7 +277,7 @@ onMounted(async () => {
             />
 
             <InputGroup>
-                <!-- <FormRow>
+                <FormRow>
                     <FormKit
                         type="select"
                         label="Ciclo escolar"
@@ -284,7 +285,7 @@ onMounted(async () => {
                         placeholder="Selecciona un ciclo escolar"
                         :options="cycles.map(cycle => ({ label: cycle.cycle, value: cycle.id }))"
                     />
-                </FormRow> -->
+                </FormRow>
 
                 <FormRow>
                     <FormKit
