@@ -43,6 +43,26 @@ export default {
             }
         }
 
+        const assignmentClass = (lead) => {
+            if (lead.promoter.id == null) {
+                return 'text-green-600 dark:text-green-400';
+            } else if (lead.dateContact == null || lead.information.followUp.id == null) {
+                return 'text-indigo-600 dark:text-indigo-400';
+            } else {
+                return 'text-red-600 dark:text-red-400';
+            }
+        };
+
+        const assignmentText = (lead) => {
+            if (lead.promoter.id == null) {
+                return 'Asignar';
+            } else if (lead.dateContact == null || lead.information.followUp.id == null) {
+                return 'Reasignar';
+            } else {
+                return 'En seguimiento';
+            }
+        };
+
         onMounted(async () => {
             fetchLeads();
         });
@@ -52,8 +72,10 @@ export default {
             currentPage,
             perPage,
             totalPages,
-            fetchLeads,
             goToPage,
+            fetchLeads,
+            assignmentClass,
+            assignmentText,
         };
     },
     components: {
@@ -123,8 +145,14 @@ export default {
                             
                         />
                     </TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell>{{ lead.promoter.name }}</TableDataCell>
+
+                    <TableDataCell
+                        class="font-semibold"
+                        :class="assignmentClass(lead)"
+                    >
+                        {{ assignmentText(lead) }}
+                    </TableDataCell>
+                    <TableDataCell class="">{{ lead.promoter.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.followUp?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information?.enrollmentStatus }}</TableDataCell>
