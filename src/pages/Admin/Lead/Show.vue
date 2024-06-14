@@ -81,8 +81,8 @@ onMounted(async () => {
 
             <ul class="py-4 space-y-3">
                 <BentoList field="Nombre">{{ lead.name }}</BentoList>
-                <BentoList field="Telefónos">{{ lead.phones }}</BentoList>
-                <BentoList field="Correo electrónico">{{ lead.emails }}</BentoList>
+                <BentoList field="Telefónos">{{ lead.phones ? lead.phones.join(", ") : '' }}</BentoList>
+                <BentoList field="Correo electrónico">{{ lead.emails ? lead.emails.join(", ") : '' }}</BentoList>
                 <BentoList field="País">{{ lead.country }}</BentoList>
                 <BentoList field="Estado">{{ lead.state }}</BentoList>
                 <BentoList field="Ciudad">{{ lead.city }}</BentoList>
@@ -139,7 +139,5 @@ onMounted(async () => {
                 
             </ul>
         </BentoItem>
-
         </section>
-
 </template>
