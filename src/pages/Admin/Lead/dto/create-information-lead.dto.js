@@ -8,7 +8,7 @@ export const CreateInformationLeadDto = (data) => {
                 createAt: gradeCreateAt,
                 updateAt: gradeUpdateAt
             },
-            dateContact,
+            dateContact: dateContact,
             scholarship,
             semester,
             reference,
@@ -19,7 +19,7 @@ export const CreateInformationLeadDto = (data) => {
                 formerSchool,
                 typeSchool,
                 enrollmentStatus,
-                followUp
+                followUp: followUp
             },
             campaign,
             asetName: {
@@ -31,7 +31,7 @@ export const CreateInformationLeadDto = (data) => {
             address,
             promoter: {
                 id: userId,
-                name: userName,
+                name: promoter,
             }
         },
     } = data;
@@ -60,6 +60,6 @@ export const CreateInformationLeadDto = (data) => {
         emails,
         address,
         userId,
-        userName,
+        promoter,
     };
 };
