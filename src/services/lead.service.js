@@ -20,7 +20,10 @@ export default {
             }
         });
     },
-    assignment(id, userId) {
-        return api.patch(`/leads/${id}/assignment/${userId}`);
+    assignment(leadId, userId) {
+        return api.patch(`/leads/${leadId}/assignment/${userId}`);
+    },
+    reassignment(leadId, userId) {
+        return api.patch(`/leads/${leadId}/reassignment/${userId}`);
     }
 }
