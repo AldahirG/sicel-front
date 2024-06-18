@@ -1,20 +1,25 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 import leadService from '../../../services/lead.service';
 import user from '../../../services/user.service';
 import { CreateInformationLeadDto } from '../../../pages/Admin/Lead/dto/create-information-lead.dto';
 
+import Table from "../../../components/Table.vue";
+import TableHeaderCell from "../../../components/TableHeaderCell.vue";
+import TableRow from "../../../components/TableRow.vue";
+import TableDataCell from "../../../components/TableDataCell.vue";
+
 const toast = inject('toast');
 const route = useRoute();
-const router = useRouter();
 
 const { id } = route.params;
 
 const lead = ref({});
 const users = ref([]);
 const selectedPromoter = ref(null);
+const promoterNames = ref({});
 
 const handleAssignment = async () => {
     try {
@@ -57,8 +62,18 @@ onMounted(async () => {
     const response = await user.getAll({ role: 2 });
     users.value = response.data.data;
 
+    /*
+        Compara el uid del timeline con el response de users
+        para encontrar el nombre del promotor con ese id
+    */
+    users.value.forEach(user => {
+        promoterNames.value[user.id] = user.name;
+    });
+
     try {
-        const { data } = await leadService.getById(id);
+        const { data } = await leadService.getById(id, {
+            'with-timeline': true
+        });
         lead.value = CreateInformationLeadDto(data);
     } catch (error) {
         console.log(error);
@@ -68,8 +83,9 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section class="grid grid-cols-2 place-items-center size-full">
-        <div class="flex flex-col items-center justify-center text-center text-black dark:text-gray-300">
+    <section class="grid grid-cols-1 lg:grid-cols-2 size-full">
+
+        <article class="flex flex-col items-center justify-center text-center text-black dark:text-gray-300">
             <div class="my-4">
                 <h3 class="text-sm md:text-xl tracking-tighter">Nombre de lead</h3>
 
@@ -84,7 +100,7 @@ onMounted(async () => {
                     <div v-else class="badge badge-error dark:badge-outline">No se puede reasignar</div>
                 </div>
 
-                <div class="mt-4 text-left">
+                <div class="flex justify-center mt-4">
                     <form v-if="!lead.userId" @submit.prevent="handleAssignment">
                         <label class="form-control w-full max-w-xs mb-4">
                             <div class="label">
@@ -114,13 +130,17 @@ onMounted(async () => {
                                 <div class="label">
                                     <span class="label-text">Promotor</span>
                                 </div>
-                                <select v-model="lead.userId" class="select select-bordered">
-                                    <option disabled selected>Selecciona un nuevo promotor</option>
+
+                                <select 
+                                    v-model="lead.userId"
+                                    class="select select-bordered"
+                                >
+                                    <option disabled selected>Selecciona un promotor</option>
                                     <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
                                 </select>
                             </label>
 
-                            <div class="flex justify-end">
+                            <div class="flex justify-center lg:justify-end mt-4">
                                 <button type="submit" class="btn bg-green-500 hover:bg-green-600 text-white">
                                     Guardar
                                 </button>
@@ -130,6 +150,25 @@ onMounted(async () => {
                 </div>
 
             </div>
-        </div>
+        </article>
+
+        <article class="flex flex-col items-center justify-center text-center text-black dark:text-gray-300">
+            <Table>
+                <template #header>
+                    <TableRow>
+                        <TableHeaderCell>Título</TableHeaderCell>
+                        <TableHeaderCell>Promotor asignado</TableHeaderCell>
+                        <TableHeaderCell>Fecha de asignación/reasignación</TableHeaderCell>
+                    </TableRow>
+                </template>
+                <template #content>
+                    <TableRow v-for="timeline in lead.timelines" :key="timeline.timelineId">
+                        <TableDataCell>{{ timeline.timelineTitle }}</TableDataCell>
+                        <TableDataCell>{{ promoterNames[timeline.timelineTimeableId] || 'Desconocido' }}</TableDataCell>
+                        <TableDataCell><relative-time :datetime="timeline.timelineCreateAt" tense="past"></relative-time></TableDataCell>
+                    </TableRow>
+                </template>
+            </Table>
+        </article>
     </section>
 </template>
