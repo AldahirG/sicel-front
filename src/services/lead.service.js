@@ -4,8 +4,8 @@ export default {
     getAll(params) {
         return api.get('/leads', { params });
     },
-    getById(id) {
-        return api.get(`/leads/${id}`)
+    getById(id, params) {
+        return api.get(`/leads/${id}`, { params })
     },
     create(data) {
         return api.post('/leads', data)
@@ -25,5 +25,5 @@ export default {
     },
     reassignment(leadId, userId) {
         return api.patch(`/leads/${leadId}/reassignment/${userId}`);
-    }
+    },
 }
