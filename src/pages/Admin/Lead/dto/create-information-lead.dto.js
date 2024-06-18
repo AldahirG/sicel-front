@@ -8,18 +8,19 @@ export const CreateInformationLeadDto = (data) => {
                 createAt: gradeCreateAt,
                 updateAt: gradeUpdateAt
             },
-            dateContact: dateContact,
+            dateContact,
             scholarship,
             semester,
+            cycle,
             reference,
             information: {
-                name: name,
+                name,
                 genre,
                 careerInterest,
                 formerSchool,
                 typeSchool,
                 enrollmentStatus,
-                followUp: followUp
+                followUp
             },
             campaign,
             asetName: {
@@ -32,9 +33,26 @@ export const CreateInformationLeadDto = (data) => {
             promoter: {
                 id: userId,
                 name: promoter,
+                paternalSurname,
+                maternalSurname
             }
         },
+        meta: {
+            timeline = []
+        } = {}
     } = data;
+
+    // Mapeo de timeline
+    const timelines = timeline.map(t => ({
+        timelineId: t.id,
+        timelineTitle: t.title,
+        timelineDescription: t.description,
+        timelineTimeableId: t.timeableId,
+        timelineTimeableModel: t.timeableModel,
+        timelineLeadId: t.leadId,
+        timelineCreateAt: t.createAt,
+        timelineUpdateAt: t.updateAt,
+    }));
 
     return {
         gradeId,
@@ -45,6 +63,7 @@ export const CreateInformationLeadDto = (data) => {
         dateContact,
         scholarship,
         semester,
+        cycle,
         reference,
         name,
         genre,
@@ -61,5 +80,8 @@ export const CreateInformationLeadDto = (data) => {
         address,
         userId,
         promoter,
+        paternalSurname,
+        maternalSurname,
+        timelines,
     };
 };
