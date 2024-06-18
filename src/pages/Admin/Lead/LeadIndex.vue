@@ -147,7 +147,7 @@ export default {
                     <TableDataCell></TableDataCell>
                     <TableDataCell></TableDataCell>
                     <TableDataCell>
-                        <relative-time :datetime="lead.updateAt" tense="past"> Ultimos cambios </relative-time>
+                        <relative-time :datetime="lead.updateAt" tense="past"></relative-time>
                     </TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
