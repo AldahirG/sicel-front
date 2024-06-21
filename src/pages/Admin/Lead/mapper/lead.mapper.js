@@ -7,6 +7,9 @@ export const LeadResource = (form) => {
         typeSchool,
         enrollmentStatus,
         followUpId,
+        type,
+        nameReference,
+        dataSource,
         email,
         phone,
         ...rest
@@ -22,6 +25,11 @@ export const LeadResource = (form) => {
             typeSchool,
             enrollmentStatus,
             followUpId,
+        },
+        reference: {
+            type,
+            name: nameReference,
+            dataSource,
         },
         email: Array.isArray(email) ? email : [email],
         phone: Array.isArray(phone) ? phone : [phone],

@@ -28,7 +28,7 @@ onMounted(async () => {
 
             careerInterest: data.data.information?.careerInterest,
             grade: data.data.grade?.name,
-            // cycle: data.data.cycle.cycle,
+            cycle: data.data.cycle?.cycle,
             formerSchool: data.data.information?.formerSchool,
             typeSchool: data.data.information?.typeSchool,
 
@@ -37,7 +37,10 @@ onMounted(async () => {
 
             enrollmentStatus: data.data.information?.enrollmentStatus,
             followUp: data.data.information.followUp?.name,
-            
+
+            type: data.data.reference?.type,
+            nameReference: data.data.reference?.name,
+            dataSource: data.data.reference?.dataSource,
         };
     } catch (error) {
         console.log(error);
@@ -101,7 +104,6 @@ onMounted(async () => {
                 <BentoList field="Ciclo escolar">{{ lead.cycle }}</BentoList>
                 <BentoList field="Escuela de procedencia">{{ lead.formerSchool }}</BentoList>
                 <BentoList field="Tipo de escuela">{{ lead.typeSchool }}</BentoList>
-                <BentoList field="Escuela de procedencia">{{ lead.formerSchool }}</BentoList>
             </ul>
         </BentoItem>
 
@@ -123,9 +125,9 @@ onMounted(async () => {
             </BentoItemTitle>
 
             <ul class="py-4 space-y-3">
-                <li><span>Tipo de referido:</span> </li>
-                <li><span>Nombre de referido:</span> </li>
-                <li><span>Donde obtuvo el dato:</span> </li>
+                <BentoList field="Tipo de referido">{{ lead.type }}</BentoList>
+                <BentoList field="Nombre del referido">{{ lead.nameReference }}</BentoList>
+                <BentoList field="Donde obtuvo el dato">{{ lead.dataSource }}</BentoList>
             </ul>
         </BentoItem>
 

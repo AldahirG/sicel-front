@@ -40,6 +40,8 @@ const cities = ref([]);
 const cycleStore = useCyclesStore();
 const cycles = ref([]);
 
+const selectedReferenceType = ref('');
+
 const handleSubmit = async (form) => {
   try {
     
@@ -294,6 +296,50 @@ onMounted(async () => {
               '9',
               '10',
             ]"
+          />
+        </FormRow>
+      </InputGroup>
+
+      <FormKit
+        type="select"
+        label="Tipo de referido"
+        name="type"
+        placeholder="Selecciona un tipo de referido"
+        :options="[
+          'NINGUNO',
+          'ALUMNO',
+          'PERSONAL_UNINTER',
+          'FAMILIAR_ALUMNO'
+        ]"
+        v-model="selectedReferenceType"
+      />
+
+      <InputGroup v-if="selectedReferenceType !== 'NINGUNO'">
+        <FormRow>
+          <FormKit
+            type="text"
+            label="Nombre del referido"
+            name="nameReference"
+            placeholder="Ingresa el nombre del referido"
+            validation="required|length:3"
+            :validation-messages="{
+              required: 'El nombre es obligatorio.',
+              length: 'Ingresa un nombre válido.'
+            }"
+          />
+        </FormRow>
+
+        <FormRow>
+          <FormKit
+            type="text"
+            label="Donde obtuvo el dato"
+            name="dataSource"
+            placeholder="Ingresa donde obtuvo el dato"
+            validation="required|length:3"
+            :validation-messages="{
+              required: 'El registro de donde obtuvo el dato es obligatorio.',
+              length: 'Ingresa un dato válido.'
+            }"
           />
         </FormRow>
       </InputGroup>
