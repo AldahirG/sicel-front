@@ -321,9 +321,8 @@ onMounted(async () => {
             label="Nombre del referido"
             name="nameReference"
             placeholder="Ingresa el nombre del referido"
-            validation="required|length:3"
+            validation="length:3"
             :validation-messages="{
-              required: 'El nombre es obligatorio.',
               length: 'Ingresa un nombre válido.'
             }"
           />
@@ -335,9 +334,8 @@ onMounted(async () => {
             label="Donde obtuvo el dato"
             name="dataSource"
             placeholder="Ingresa donde obtuvo el dato"
-            validation="required|length:3"
+            validation="length:3"
             :validation-messages="{
-              required: 'El registro de donde obtuvo el dato es obligatorio.',
               length: 'Ingresa un dato válido.'
             }"
           />
