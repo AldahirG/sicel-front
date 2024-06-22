@@ -311,10 +311,9 @@ onMounted(async () => {
           'PERSONAL_UNINTER',
           'FAMILIAR_ALUMNO'
         ]"
-        v-model="selectedReferenceType"
       />
 
-      <InputGroup v-if="selectedReferenceType !== 'NINGUNO'">
+      <InputGroup>
         <FormRow>
           <FormKit
             type="text"
