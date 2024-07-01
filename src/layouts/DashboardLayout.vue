@@ -473,7 +473,7 @@ watchEffect(() => {
         </header>
 
         <main 
-            class="[grid-area:main] px-4 py-6 transition-all duration-200 ease-in-out"
+            class="[grid-area:main] bg-white dark:bg-[#1D232A] px-4 py-6 transition-all duration-200 ease-out"
         >
             <RouterView />
         </main>
