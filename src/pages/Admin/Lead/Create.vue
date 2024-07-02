@@ -40,8 +40,6 @@ const cities = ref([]);
 const cycleStore = useCyclesStore();
 const cycles = ref([]);
 
-const selectedReferenceType = ref('');
-
 const handleSubmit = async (form) => {
   try {
     
@@ -245,10 +243,10 @@ onMounted(async () => {
 
       <FormKit
         type="select"
-        label="Medio de contacto"
+        label="Aset Name"
         name="asetNameId"
-        placeholder="Selecciona un medio de contacto"
-        :options="asetNames.map(asetName => ({ label: [asetName.contactType.name + ' - ' + asetName.name], value: asetName.id }))"
+        placeholder="Selecciona un Aset Name"
+        :options="asetNames.map(asetName => ({ label: [asetName.name + ' - ' + asetName.contactType.name], value: asetName.id }))"
       />
 
       <FormKit
