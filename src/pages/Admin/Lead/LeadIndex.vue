@@ -144,8 +144,8 @@ export default {
                     <TableDataCell>{{ lead.address?.country }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.state }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.city }}</TableDataCell>
-                    <TableDataCell></TableDataCell>
-                    <TableDataCell></TableDataCell>
+                    <TableDataCell>{{ lead.cycle?.cycle }}</TableDataCell>
+                    <TableDataCell>{{ lead.reference?.type }}</TableDataCell>
                     <TableDataCell>
                         <relative-time :datetime="lead.updateAt" tense="past"></relative-time>
                     </TableDataCell>
