@@ -33,6 +33,7 @@ onMounted(async () => {
         <Table>
             <template #header>
                 <TableRow>
+                    <TableHeaderCell>UID</TableHeaderCell>
                     <TableHeaderCell>Nombre</TableHeaderCell>
                     <TableHeaderCell>Apellido Paterno</TableHeaderCell>
                     <TableHeaderCell>Apellido Materno</TableHeaderCell>
@@ -43,6 +44,7 @@ onMounted(async () => {
             </template>
             <template #content>
                 <TableRow v-for="user in users" :key="user.id">
+                    <TableDataCell>{{ user.id }}</TableDataCell>
                     <TableDataCell>{{ user.name }}</TableDataCell>
                     <TableDataCell>{{ user.paternalSurname }}</TableDataCell>
                     <TableDataCell>{{ user.maternalSurname }}</TableDataCell>
