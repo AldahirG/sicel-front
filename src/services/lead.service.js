@@ -1,8 +1,14 @@
 import api from "../lib/axios";
 
 export default {
-    getAll(params) {
-        return api.get('/leads', { params });
+    getAll(page = 1) {
+        return api.get('/leads', { 
+            params: {
+                paginated: true,
+                'per-page': 10,
+                page: page,
+            }
+        });
     },
     getById(id, params) {
         return api.get(`/leads/${id}`, { params })

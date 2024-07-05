@@ -1,6 +1,6 @@
 <script>
-import { defineAsyncComponent, onMounted, ref } from "vue";
-import lead from '../../../services/lead.service'
+import { onMounted, ref, watch } from "vue";
+import lead from '../../../services/lead.service';
 
 import Button from "../../../components/Button.vue";
 import Checkbox from "../../../components/Checkbox.vue";
@@ -9,51 +9,35 @@ import Pagination from "../../../components/Pagination.vue";
 import TableRow from "../../../components/TableRow.vue";
 import TableHeaderCell from "../../../components/TableHeaderCell.vue";
 import TableDataCell from "../../../components/TableDataCell.vue";
-const Table = defineAsyncComponent(() =>
-    import('../../../components/Table.vue')
-);
+import Table from '../../../components/Table.vue';
 
 export default {
     setup() {
-        const leads = ref([]);
+        const leads = ref({});
         const currentPage = ref(1);
-        const perPage = ref(10);
-        const totalPages = ref(0);
+        const totalPages = ref(1);
 
-        const goToPage = async (page) => {
-            if (page < 1) {
-                page = 1;
-            }
-            await fetchLeads(page);
-        }
+        const fetchLeads = async (page) => {
+            const { data } = await lead.getAll(page);
 
-        const fetchLeads = async (page = 1) => {
-            try {
-                const params = {
-                    paginated: true,
-                    page: page,
-                    'per-page': perPage.value
-                };
+            leads.value = data.data;
+            currentPage.value = data.meta.currentPage;
+            totalPages.value = data.meta.totalPages;
+        };
 
-                const response = await lead.getAll(params);
-                leads.value = response.data.data;
-                currentPage.value = response.data.meta.currentPage;
-                totalPages.value = response.data.meta.totalPages;
-            } catch (error) {
-                console.error("Error al obtener los leads:", error);
-            }
-        }
+        const handlePageChange = (page) => {
+            fetchLeads(page);
+        };
 
         onMounted(async () => {
             fetchLeads();
         });
-        
+
         return {
             leads,
             currentPage,
-            perPage,
             totalPages,
-            goToPage,
+            handlePageChange,
             fetchLeads,
         };
     },
@@ -94,7 +78,7 @@ export default {
             <template #header>
                 <TableRow>
                     <TableHeaderCell>
-                        
+                        <!-- Header para el checkbox -->
                     </TableHeaderCell>
                     <TableHeaderCell>Estatus asignación</TableHeaderCell>
                     <TableHeaderCell>Promotor</TableHeaderCell>
@@ -122,11 +106,12 @@ export default {
             <template #content>
                 <TableRow v-for="lead in leads" :key="lead.id">
                     <TableDataCell>
-                        <Checkbox 
-                            
+                        <!-- Checkbox -->
+                        <input 
+                            type="checkbox" 
+                            class="checkbox"
                         />
                     </TableDataCell>
-
                     <TableDataCell></TableDataCell>
                     <TableDataCell class="">{{ lead.promoter.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
@@ -181,7 +166,11 @@ export default {
             </template>
         </Table>
 
-        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchLeads" />
+        <Pagination 
+            :currentPage="currentPage" 
+            :totalPages="totalPages" 
+            @page-changed="handlePageChange" 
+        />
 
     </section>
 </template>
