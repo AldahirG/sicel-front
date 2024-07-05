@@ -32,4 +32,11 @@ export default {
     reassignment(leadId, userId) {
         return api.patch(`/leads/${leadId}/reassignment/${userId}`);
     },
+    multi_select(data){
+        try {
+            return api.patch('/leads/muti-select/update-promotor', data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
