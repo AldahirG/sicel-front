@@ -15,6 +15,7 @@ import cycle from '../../../services/cycle.service';
 import InputGroup from "../../../components/InputGroup.vue";
 import FormRow from "../../../components/FormRow.vue";
 import FormContainer from '../../../components/FormContainer.vue';
+import Button from "../../../components/Button.vue";
 
 const toast = inject('toast');
 const route = useRoute();
