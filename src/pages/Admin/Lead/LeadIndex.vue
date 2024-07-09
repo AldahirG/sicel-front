@@ -126,7 +126,7 @@ export default {
                     <TableDataCell></TableDataCell>
                     <TableDataCell>{{ lead.asetName?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.campaign?.name }}</TableDataCell>
-                    <TableDataCell>{{ lead.address?.country }}</TableDataCell>
+                    <TableDataCell>{{ lead.address?.country.name }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.state }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.city }}</TableDataCell>
                     <TableDataCell>{{ lead.cycle?.cycle }}</TableDataCell>
@@ -136,30 +136,28 @@ export default {
                     </TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
-                        <Dropdown> 
-                            <router-link 
-                                title="Asignar y reasignar promotor"
-                                :to="{ path: '/admin/leads/' + lead.id + '/assignment'}"
-                                class="py-2 px-4 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md duration-200"
-                            >
-                                <i class="bi bi-person-plus-fill"></i>
-                            </router-link>
+                        <router-link 
+                            title="Asignar y reasignar promotor"
+                            :to="{ path: '/admin/leads/' + lead.id + '/assignment'}"
+                            class="py-2 px-4 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md duration-200"
+                        >
+                            <i class="bi bi-person-plus-fill"></i>
+                        </router-link>
 
-                            <router-link 
-                                title="Mostrar datos"
-                                :to="{ path: '/admin/leads/' + lead.id + '/show'}"
-                                class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
-                            >
-                                <i class="bi bi-eye-fill"></i>
-                            </router-link>
+                        <router-link 
+                            title="Mostrar datos"
+                            :to="{ path: '/admin/leads/' + lead.id + '/show'}"
+                            class="py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-md duration-200"
+                        >
+                            <i class="bi bi-eye-fill"></i>
+                        </router-link>
 
-                            <router-link 
-                                :to="{ path: '/admin/leads/' + lead.id + '/edit' }"
-                                class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
-                            >
-                                <i class="bi bi-pencil-square"></i>
-                            </router-link>
-                        </Dropdown>
+                        <router-link 
+                            :to="{ path: '/admin/leads/' + lead.id + '/edit' }"
+                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
+                        >
+                            <i class="bi bi-pencil-square"></i>
+                        </router-link>
 
                     </TableDataCell>
                 </TableRow>
