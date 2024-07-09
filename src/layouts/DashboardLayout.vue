@@ -5,9 +5,6 @@ import { useRoute } from 'vue-router';
 
 import SideBarLink from '../components/SideBarLink.vue';
 
-// URL de API
-const url = import.meta.env.VITE_API_URL;
-
 const route = useRoute();
 
 const props = defineProps({
@@ -19,8 +16,8 @@ const props = defineProps({
 const theme = ref(localStorage.getItem('theme') || 'light');
 const isChecked = ref(theme.value === 'dark');
 const handleToggle = () => {
-  isChecked.value = !isChecked.value;
-  theme.value = isChecked.value ? 'dark' : 'light';
+    isChecked.value = !isChecked.value;
+    theme.value = isChecked.value ? 'dark' : 'light';
 };
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true")
@@ -56,7 +53,7 @@ watchEffect(() => {
 <template>
     <div 
         id="app" 
-        class="relative h-dvh transition-all duration-200 ease-in-out" 
+        class="relative h-full transition-all duration-200 ease-in-out" 
         :class="`${is_expanded ? 'is-expanded' : ''}`"
     >
         <aside 
