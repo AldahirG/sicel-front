@@ -59,12 +59,12 @@ watchEffect(() => {
                   <img src="/Uninter - Logo (Responsive).webp" alt="logo-uninter" />
                 </figure>
               </div>
-              <h1 class="text-black dark:text-white text-center text-lg md:text-2xl font-bold uppercase transition-colors duration-300 ease-out">
+              <h2 class="text-black dark:text-white text-center text-lg md:text-2xl font-bold uppercase transition-colors duration-300 ease-out">
                 Inicio de sesión
-              </h1>
-              <h2 class="text-center text-base md:text-lg font-semibold text-elephant-900 dark:text-regal-blue-500 lg:dark:text-elephant-400 capitalize transition-colors duration-300 ease-out">
-                Sistema de Gestión y control de Leads.
               </h2>
+              <h1 class="mt-2 text-center text-base md:text-lg font-semibold text-elephant-900 dark:text-regal-blue-500 lg:dark:text-elephant-400 transition-colors duration-300 ease-out">
+                Sistema Integral de Control y Eficiencia en Leads.
+              </h1>
             </div>
 
             <div class="w-full max-w-xs md:max-w-xl lg:max-w-md">
