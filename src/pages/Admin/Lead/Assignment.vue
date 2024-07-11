@@ -40,23 +40,6 @@ const handleAssignment = async () => {
     }
 };
 
-const handleReassignment = async () => {
-    try {
-        const { data } = await leadService.reassignment(id, lead.value.userId);
-        const message = data.http.message;
-
-        toast.open({
-            message: message,
-            type: 'success'
-        });
-
-    } catch (error) {
-        toast.open({
-            message: error.response.data.message,
-            type: 'error'
-        });
-    }
-};
 
 onMounted(async () => {
     const response = await user.getAll({ role: 2 });
@@ -83,7 +66,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section class="grid grid-cols-1 lg:grid-cols-2 size-full">
+    <section class="grid grid-cols-1 lg:grid-cols-2 size-full h-[calc(100dvh-120px)]">
 
         <article class="flex flex-col items-center justify-center text-center text-black dark:text-gray-300">
             <div class="my-4">
@@ -120,32 +103,7 @@ onMounted(async () => {
                             <button type="submit" class="btn bg-green-500 hover:bg-green-600 text-white">
                                 Guardar
                             </button>
-                        </div>
-                        
-                    </form>
-
-                    <form v-else @submit.prevent="handleReassignment">
-                        <template v-if="lead.dateContact == null || lead.followUp == null">
-                            <label class="form-control w-full max-w-xs mb-4">
-                                <div class="label">
-                                    <span class="label-text">Promotor</span>
-                                </div>
-
-                                <select 
-                                    v-model="lead.userId"
-                                    class="select select-bordered"
-                                >
-                                    <option disabled selected>Selecciona un promotor</option>
-                                    <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
-                                </select>
-                            </label>
-
-                            <div class="flex justify-center lg:justify-end mt-4">
-                                <button type="submit" class="btn bg-green-500 hover:bg-green-600 text-white">
-                                    Guardar
-                                </button>
-                            </div>
-                        </template>
+                        </div>  
                     </form>
                 </div>
 
