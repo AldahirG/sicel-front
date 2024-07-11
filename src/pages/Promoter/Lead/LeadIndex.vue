@@ -37,14 +37,6 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section class="flex items-end justify-end mb-6 gap-3">
-        <Button 
-            name="createLeadPromotor" 
-            label="lead"
-            width="w-32"
-        />
-    </section>
-
     <section>
         <Table>
             <template #header>
