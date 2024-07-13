@@ -41,6 +41,11 @@ export default {
             fetchLeads,
         };
     },
+    methods: {
+        showAlert() {
+            this.$swal('Lead eliminado!');
+        },
+    },
     components: {
         Button,
         Checkbox,
@@ -158,6 +163,13 @@ export default {
                         >
                             <i class="bi bi-pencil-square"></i>
                         </router-link>
+
+                        <button 
+                            class="btn"
+                            @click="showAlert"
+                        >
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
 
                     </TableDataCell>
                 </TableRow>

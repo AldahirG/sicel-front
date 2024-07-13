@@ -8,6 +8,8 @@ import { createPinia } from 'pinia';
 import { plugin, defaultConfig } from '@formkit/vue'
 import {useToast} from 'vue-toast-notification';
 import config from '../formkit.config';
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 import App from './App.vue';
 import router from './routes/routes';
@@ -22,10 +24,16 @@ pinia.use(({ store }) => {
     store.router = markRaw(router);
 })
 
+const options = {
+    confirmButtonColor: '#41b882',
+    cancelButtonColor: '#ff7674',
+};
+
 const app = createApp(App)
 
 app.provide('toast', toast)
 app.use(router)
 app.use(pinia)
+app.use(VueSweetalert2, options)
 app.use(plugin, defaultConfig(config))
 app.mount('#app')
