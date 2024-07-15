@@ -19,6 +19,13 @@ export default {
     update(id, data) {
         return api.patch(`/leads/${id}`, data)
     },
+    delete(id) {
+        try {
+            return api.delete(`/leads/${id}`);
+        } catch (error) {
+            console.log(error); 
+        }
+    },
     upload(data) {
         return api.post('/leads/file-share', data, {
             headers: {

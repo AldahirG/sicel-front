@@ -42,8 +42,27 @@ export default {
         };
     },
     methods: {
-        showAlert() {
-            this.$swal('Lead eliminado!');
+        confirmDelete(leadId) {
+            this.$swal.fire({
+                title: '¿Estás seguro de eliminar este registro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '758694',
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await lead.delete(leadId);
+                    this.$swal.fire(
+                        '¡Eliminado!',
+                        'El registro ha sido eliminado.',
+                        'success'
+                    );
+                    await this.fetchLeads(this.currentPage);
+                }
+            });
         },
     },
     components: {
@@ -165,8 +184,8 @@ export default {
                         </router-link>
 
                         <button 
-                            class="btn"
-                            @click="showAlert"
+                            class="btn bg-red-500 hover:bg-red-600 text-white"
+                            @click="confirmDelete(lead.id)"
                         >
                             <i class="bi bi-trash3-fill"></i>
                         </button>
