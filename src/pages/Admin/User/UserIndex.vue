@@ -1,28 +1,82 @@
-<script setup>
-import { defineAsyncComponent, onMounted, ref } from "vue";
-import { useUsersStore } from "../../../store/Admin/users";
+<script>
+import { onMounted, ref } from "vue";
+import user from '../../../services/user.service';
 
 import Button from "../../../components/Button.vue";
-import TableRow from "../../../components/TableRow.vue";
-import TableHeaderCell from "../../../components/TableHeaderCell.vue";
+import Pagination from "../../../components/Pagination.vue";
+import Table from '../../../components/Table.vue';
 import TableDataCell from "../../../components/TableDataCell.vue";
-const Table = defineAsyncComponent(() =>
-    import('../../../components/Table.vue')
-);
+import TableHeaderCell from "../../../components/TableHeaderCell.vue";
+import TableRow from "../../../components/TableRow.vue";
 
-const store = useUsersStore();
-const users = ref([]);
+export default {
+    setup() {
+        const users = ref({});
+        const currentPage = ref(1);
+        const totalPages = ref(1);
 
-onMounted(async () => {
-    await store.getAll();
-    users.value = store.users;
-});
+        const fetchUsers = async (page) => {
+            const { data } = await user.getAll(page);
+
+            users.value = data.data;
+            currentPage.value = data.meta.currentPage;
+            totalPages.value = data.meta.totalPages;
+        };
+
+        const handlePageChange = (page) => {
+            fetchUsers(page);
+        };
+
+        onMounted(async () => {
+            fetchUsers();
+        });
+
+        return {
+            users,
+            currentPage,
+            totalPages,
+            handlePageChange,
+            fetchUsers,
+        };
+    },
+    methods: {
+        confirmDelete(userId) {
+            this.$swal.fire({
+                title: '¿Estás seguro de eliminar este registro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '758694',
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await user.delete(userId);
+                    this.$swal.fire(
+                        '¡Eliminado!',
+                        'El registro ha sido eliminado.',
+                        'success'
+                    );
+                    await this.fetchUsers(this.currentPage);
+                }
+            });
+        },
+    },
+    components: {
+        Button,
+        TableRow,
+        TableHeaderCell,
+        TableDataCell,
+        Table,
+        Pagination,
+    },
+}
 
 </script>
 
 <template>
     <section class="flex items-end justify-end mb-6">
-        
         <Button
             name="createUser"
             label="usuario"
@@ -33,7 +87,7 @@ onMounted(async () => {
         <Table>
             <template #header>
                 <TableRow>
-                    <TableHeaderCell>UID</TableHeaderCell>
+                    <TableHeaderCell>ID</TableHeaderCell>
                     <TableHeaderCell>Nombre</TableHeaderCell>
                     <TableHeaderCell>Apellido Paterno</TableHeaderCell>
                     <TableHeaderCell>Apellido Materno</TableHeaderCell>
@@ -53,7 +107,7 @@ onMounted(async () => {
                     <TableDataCell>
 
                         <router-link :to="{ path: '/admin/users/' + user.id + '/edit/'}"
-                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200">
+                            class="btn text-black bg-amber-400 hover:bg-amber-500">
                             <i class="bi bi-pencil-square"></i>
                         </router-link>
 
@@ -61,5 +115,12 @@ onMounted(async () => {
                 </TableRow>
             </template>
         </Table>
+
+        <Pagination 
+            :currentPage="currentPage" 
+            :totalPages="totalPages" 
+            @page-changed="handlePageChange" 
+        />
+
     </section>
 </template>
