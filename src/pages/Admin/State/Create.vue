@@ -1,19 +1,16 @@
 <script setup>
 import { useRouter } from "vue-router"
-import { defineAsyncComponent, inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { reset } from "@formkit/vue"
 
 import state from '../../../services/state.service';
-import { useCountriesStore } from '../../../store/Admin/countries';
+import country from '../../../services/country.service';
 
-const FormContainer = defineAsyncComponent(() =>
-    import('../../../components/FormContainer.vue')
-);
+import FormContainer from '../../../components/FormContainer.vue';
 
 const toast = inject('toast');
 const router = useRouter();
 
-const store = useCountriesStore();
 const countries = ref([]);
 
 const handleSubmit = async (form) => {
@@ -39,8 +36,8 @@ const handleSubmit = async (form) => {
 }
 
 onMounted(async () => {
-    await store.getAll();
-    countries.value = store.countries;
+    const { data } = await country.getAll();
+    countries.value = data.data;
 });
 
 
