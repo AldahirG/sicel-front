@@ -12,6 +12,7 @@ export default {
     const toast = inject('toast');
     const router = useRouter();
     const uploadedFile = ref(null);
+    const isLoading = ref(false);
 
     const onFileUploaded = (file) => {
       uploadedFile.value = file;
@@ -20,6 +21,7 @@ export default {
     const uploadFile = async () => {
       const formData = new FormData();
       formData.append('file', uploadedFile.value);
+      isLoading.value = true;
 
       try {
         const { data } = await lead.upload(formData);
@@ -37,6 +39,8 @@ export default {
           message: error.response.data.message,
           type: 'error'
         });
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -44,6 +48,7 @@ export default {
       onFileUploaded,
       uploadFile,
       uploadedFile,
+      isLoading,
     };
   }
 }
@@ -58,9 +63,16 @@ export default {
     <button 
       v-if="uploadedFile" 
       @click="uploadFile" 
-      class="btn text-white bg-green-500 hover:bg-green-600"
+      :disabled="isLoading"
+      class="btn text-white bg-green-500 hover:bg-green-600 flex items-center"
     >
-      Enviar Archivo
+      <h5 v-if="!isLoading">Subir archivo</h5>
+      <h5 
+        v-else 
+        class="flex items-center"
+      >
+        Cargando leads <span class="loading loading-spinner loading-xs ml-2"></span>
+      </h5>
     </button>
   </div>
 </template>

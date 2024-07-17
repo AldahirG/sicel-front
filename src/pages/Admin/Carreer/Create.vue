@@ -1,13 +1,11 @@
 <script setup>
 import { useRouter } from "vue-router"
-import { defineAsyncComponent, inject } from 'vue';
+import { inject } from 'vue';
 import { reset } from "@formkit/vue"
 
 import career from '../../../services/career.service';
 
-const FormContainer = defineAsyncComponent(() =>
-  import('../../../components/FormContainer.vue')
-);
+import FormContainer from '../../../components/FormContainer.vue';
 
 const toast = inject('toast');
 const router = useRouter();
