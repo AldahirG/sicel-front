@@ -36,7 +36,7 @@ const handleSubmit = async (form) => {
 }
 
 onMounted(async () => {
-    const { data } = await country.getAll();
+    const { data } = await country.getList();
     countries.value = data.data;
 });
 

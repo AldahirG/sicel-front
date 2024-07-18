@@ -25,5 +25,12 @@ export default {
         } catch (error) {
             console.log(error);
         }
+    },
+    getList() {
+        try {
+            return api.get('/countries');
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
