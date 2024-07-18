@@ -42,23 +42,27 @@ export default {
     methods: {
         confirmDelete(userId) {
             this.$swal.fire({
-                title: '¿Estás seguro de eliminar este registro?',
+                title: '¿Estás seguro de dar de baja a este usuario?',
                 text: "¡No podrás revertir esto!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '758694',
-                confirmButtonText: 'Eliminar',
+                confirmButtonText: 'Dar de baja',
                 cancelButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    await user.delete(userId);
+                    try {
+                        await user.delete(userId);
                     this.$swal.fire(
                         '¡Eliminado!',
                         'El registro ha sido eliminado.',
                         'success'
                     );
                     await this.fetchUsers(this.currentPage);
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
             });
         },
@@ -104,12 +108,19 @@ export default {
                     <TableDataCell>{{ user.maternalSurname }}</TableDataCell>
                     <TableDataCell>{{ user.email }}</TableDataCell>
                     <TableDataCell>{{ user.roles.join(', ') }}</TableDataCell>
-                    <TableDataCell>
+                    <TableDataCell class="flex flex-col gap-2 text-center">
 
                         <router-link :to="{ path: '/admin/users/' + user.id + '/edit/'}"
                             class="btn text-black bg-amber-400 hover:bg-amber-500">
                             <i class="bi bi-pencil-square"></i>
                         </router-link>
+
+                        <button 
+                            class="btn text-white bg-red-500 hover:bg-red-600"
+                            @click="confirmDelete(user.id)"
+                        >
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
 
                     </TableDataCell>
                 </TableRow>

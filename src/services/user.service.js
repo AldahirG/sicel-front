@@ -23,4 +23,11 @@ export default {
     update(id, data) {
         return api.patch(`/users/${id}`, data)
     },
+    delete(id) {
+        try {
+            return api.delete(`/users/${id}`);
+        } catch (error) {
+            console.log(error); 
+        }
+    },
 }
