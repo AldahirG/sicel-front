@@ -1,5 +1,6 @@
 import { promoterGuard } from '../../core/guards/roles.guard';
 import { leadRoutes } from './lead.routes';
+import { enrollmentRoutes } from './enrollment.routes';
 
 const ROUTE_NAME = 'promoter';
 
@@ -15,5 +16,7 @@ export const promoterRoutes = [{
         },
 
         ...leadRoutes,
+
+        ...enrollmentRoutes,
     ]
 }]
