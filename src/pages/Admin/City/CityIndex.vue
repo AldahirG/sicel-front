@@ -1,28 +1,81 @@
-<script setup>
-import { defineAsyncComponent, onMounted, ref } from "vue";
-import { useCitiesStore } from "../../../store/Admin/cities";
+<script>
+import { onMounted, ref } from "vue";
+import city from '../../../services/city.service';
 
 import Button from "../../../components/Button.vue";
-import TableRow from "../../../components/TableRow.vue";
-import TableHeaderCell from "../../../components/TableHeaderCell.vue";
+import Pagination from "../../../components/Pagination.vue";
+import Table from '../../../components/Table.vue';
 import TableDataCell from "../../../components/TableDataCell.vue";
-const Table = defineAsyncComponent(() =>
-    import('../../../components/Table.vue')
-);
+import TableHeaderCell from "../../../components/TableHeaderCell.vue";
+import TableRow from "../../../components/TableRow.vue";
 
-const store = useCitiesStore();
-const cities = ref([]);
+export default {
+    setup() {
+        const cities = ref({});
+        const currentPage = ref(1);
+        const totalPages = ref(1);
 
-onMounted(async () => {
-    await store.getAll();
-    cities.value = store.cities;
-});
+        const fetchCities = async (page) => {
+            const { data } = await city.getAll(page);
 
+            cities.value = data.data;
+            currentPage.value = data.meta.currentPage;
+            totalPages.value = data.meta.totalPages;
+        };
+
+        const handlePageChange = (page) => {
+            fetchCities(page);
+        };
+
+        onMounted(async () => {
+            fetchCities();
+        });
+
+        return {
+            cities,
+            currentPage,
+            totalPages,
+            handlePageChange,
+            fetchCities,
+        };
+    },
+    methods: {
+        confirmDelete(cityId) {
+            this.$swal.fire({
+                title: '¿Estás seguro de eliminar este registro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '758694',
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await city.delete(cityId);
+                    this.$swal.fire(
+                        '¡Eliminado!',
+                        'El registro ha sido eliminado.',
+                        'success'
+                    );
+                    await this.fetchCities(this.currentPage);
+                }
+            });
+        },
+    },
+    components: {
+        Button,
+        Pagination,
+        Table,
+        TableDataCell,
+        TableHeaderCell,
+        TableRow,
+    },
+};
 </script>
 
 <template>
     <section class="flex items-end justify-end mb-6">
-        
         <Button
             name="createCity"
             label="ciudad"
@@ -43,16 +96,29 @@ onMounted(async () => {
                 <TableRow v-for="city in cities" :key="city.id">
                     <TableDataCell>{{ city.name }}</TableDataCell>
                     <TableDataCell>{{ city.state.name }}</TableDataCell>
-                    <TableDataCell>
+                    <TableDataCell class="flex gap-2 text-center">
 
                         <router-link :to="{ path: '/admin/cities/' + city.id + '/edit/'}"
-                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200">
+                            class="btn text-black bg-amber-400 hover:bg-amber-500">
                             <i class="bi bi-pencil-square"></i>
                         </router-link>
+
+                        <button 
+                            class="btn text-white bg-red-500 hover:bg-red-600"
+                            @click="confirmDelete(city.id)"
+                        >
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
 
                     </TableDataCell>
                 </TableRow>
             </template>
         </Table>
+
+        <Pagination 
+            :currentPage="currentPage" 
+            :totalPages="totalPages" 
+            @page-changed="handlePageChange" 
+        />
     </section>
 </template>
