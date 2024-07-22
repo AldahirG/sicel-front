@@ -42,7 +42,7 @@ const handleAssignment = async () => {
 
 
 onMounted(async () => {
-    const response = await user.getAll({ role: 2 });
+    const response = await user.getList({ role: 2 });
     users.value = response.data.data;
 
     /*

@@ -30,4 +30,11 @@ export default {
             console.log(error); 
         }
     },
+    getList() {
+        try {
+        return api.get('/users'); 
+        } catch (error) {
+            console.log(error); 
+        }
+    }
 }
