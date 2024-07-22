@@ -431,7 +431,7 @@ watchEffect(() => {
         </aside>
 
         <header
-            class="[grid-area:header] h-[60px] px-3 md:px-6 bg-white dark:bg-[#1D232A] border-b border-b-[#d1d0d0] transition-all duration-200 ease-out sticky top-0 z-30"
+            class="[grid-area:header] h-[60px] px-3 md:px-6 bg-white dark:bg-[#1D232A] border-b border-b-[#d1d0d0] sticky top-0 z-30"
         >
             <nav class="flex items-center justify-end h-full w-full">
                 <div class="flex flex-row items-center gap-6">
@@ -470,7 +470,7 @@ watchEffect(() => {
         </header>
 
         <main 
-            class="[grid-area:main] bg-white dark:bg-[#1D232A] px-4 py-6 transition-all duration-200 ease-out"
+            class="[grid-area:main] bg-white dark:bg-[#1D232A] px-4 py-6"
         >
             <RouterView />
         </main>
