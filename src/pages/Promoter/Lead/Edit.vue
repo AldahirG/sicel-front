@@ -1,4 +1,5 @@
 <script setup>
+import Swal from 'sweetalert2'
 import { inject , onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -15,7 +16,6 @@ import cycle from '../../../services/cycle.service';
 import InputGroup from "../../../components/InputGroup.vue";
 import FormRow from "../../../components/FormRow.vue";
 import FormContainer from '../../../components/FormContainer.vue';
-import Button from "../../../components/Button.vue";
 
 const toast = inject('toast');
 const route = useRoute();
@@ -53,6 +53,40 @@ const handleSubmit = async (form) => {
         });
     }
 };
+
+const addComment = () => {
+    Swal.fire({
+        title: 'Crear comentario',
+        html:
+            '<textarea id="swal-textarea" class="swal2-textarea" placeholder="Escribe un comentario" rows="4" cols="30"></textarea>',
+        focusConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            const description = document.getElementById('swal-input1').value
+
+            if (!description) {
+                Swal.showValidationMessage('Es necesario escribir un comentario')
+            }
+            return { description: description }
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const commentsData = {
+                description: result.value.description,
+                leadId: id
+            }
+
+            const response = await lead.comments(commentsData)
+
+            Swal.fire(
+                'Enviado!',
+                'Comentario creado con éxito',
+                'success'
+            )
+        }
+    })
+}
 
 onMounted(async () => {
     try {
@@ -104,15 +138,12 @@ onMounted(async () => {
 <template>
     <FormContainer maxWidth="max-w-5xl">
         <div class="flex justify-end mt-2 mb-4">
-            <Button 
-                name="uploadLead"
-                actionLabel="Añadir" 
-                label="comentario"
-                width="w-44"
-                icon="bi bi-chat-left-text-fill"
-                background="bg-[#4f6d7a]"
-                borderColor="border-[#4f6d7a]"
-            />
+            <button 
+                class="btn bg-[#219C90] hover:bg-[#1a877e] text-white"
+                @click="addComment()"
+            >
+                Añadir comentario <i class="bi bi-plus-circle-dotted text-xl"></i>
+            </button>
         </div>
 
         <FormKit 

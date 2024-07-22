@@ -46,6 +46,13 @@ export default {
             console.log(error);
         }
     },
+    comments(data){
+        try {
+            return api.post('/comments', data);
+        } catch (error) {
+            console.log(error);
+        }
+    },
     // Leads que le fueron asignados a un promotor
     leads_promoter(id, page = 1) {
         return api.get(`/leads/get-by-user/${id}`, { 
