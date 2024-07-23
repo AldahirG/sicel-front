@@ -1,6 +1,6 @@
 <script setup>
 import { useAuthStore } from '../store/auth';
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
 import SideBarLink from '../components/SideBarLink.vue';
