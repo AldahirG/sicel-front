@@ -7,6 +7,7 @@ import leadService from '../../../services/lead.service';
 import BentoItem from '../../../components/BentoItem.vue';
 import BentoItemTitle from '../../../components/BentoItemTitle.vue';
 import BentoList from "../../../components/BentoList.vue";
+import Chat from "../../../components/Chat.vue";
 
 const route = useRoute();
 
@@ -16,7 +17,10 @@ const lead = ref({});
 
 onMounted(async () => {
     try {
-        const { data } = await leadService.getById(id);
+        const { data } = await leadService.getById(id, {
+            comments: true
+        });
+
         lead.value = {
             name: data.data.information?.name,
             phones: data.data?.phones,
@@ -41,7 +45,10 @@ onMounted(async () => {
             type: data.data.reference?.type,
             nameReference: data.data.reference?.name,
             dataSource: data.data.reference?.dataSource,
+
+            comments: data.meta?.timeline
         };
+
     } catch (error) {
         console.log(error);
     }
@@ -136,9 +143,15 @@ onMounted(async () => {
                 <i class="bi bi-chat-right-dots-fill mr-2"></i> Comentarios
             </BentoItemTitle>
 
-            <ul class="py-4 space-y-3">
-                <li><span>Comentarios:</span> </li>
-                
+            <ul class="py-4 space-y-3">         
+                <li v-for="comment in lead.comments" :key="comment.id">
+                    <Chat 
+                        :date="comment.createAt"
+                        :text="comment.description"
+                        bgColor="bg-green-500"
+                        textColor="text-black"
+                    />
+                </li>
             </ul>
         </BentoItem>
         </section>
