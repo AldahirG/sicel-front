@@ -210,14 +210,7 @@ onMounted(async () => {
                 name="phone"
                 placeholder="Ingresa un número de teléfono"
             />
-
-            <FormKit
-                type="tel"
-                label="Teléfono"
-                name="phone2"
-                placeholder="Ingresa un número de teléfono*"
-            />
-
+            
             <FormKit
                 type="email"
                 label="Correo electrónico"
