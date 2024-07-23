@@ -137,7 +137,7 @@ export default {
                         />
                     </TableDataCell>
                     <TableDataCell></TableDataCell>
-                    <TableDataCell class="">{{ lead.promoter.name }}</TableDataCell>
+                    <TableDataCell class="">{{ lead.promoter?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information.followUp?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.information?.enrollmentStatus }}</TableDataCell>
@@ -150,7 +150,7 @@ export default {
                     <TableDataCell></TableDataCell>
                     <TableDataCell>{{ lead.asetName?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.campaign?.name }}</TableDataCell>
-                    <TableDataCell>{{ lead.address?.country.name }}</TableDataCell>
+                    <TableDataCell>{{ lead.address?.country?.name }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.state }}</TableDataCell>
                     <TableDataCell>{{ lead.address?.city }}</TableDataCell>
                     <TableDataCell>{{ lead.cycle?.cycle }}</TableDataCell>
