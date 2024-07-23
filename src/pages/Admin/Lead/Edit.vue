@@ -76,21 +76,21 @@ onMounted(async () => {
 
         const { data } = await lead.getById(id);
         form.value = {
-            name: data.data?.information.name,
-            genre: data.data?.information.genre,
-            enrollmentStatus: data.data?.information.enrollmentStatus,
+            name: data.data?.information?.name,
+            genre: data.data?.information?.genre,
+            enrollmentStatus: data.data?.information?.enrollmentStatus,
             followUpId: data.data?.information?.followUp?.id,
             phone: data.data?.phones,
             email: data.data?.emails,
-            careerInterest: data.data?.information.careerInterest,
-            gradeId: data.data?.grade.id,
+            careerInterest: data.data?.information?.careerInterest,
+            gradeId: data.data?.grade?.id,
             scholarship: data.data?.scholarship,
-            formerSchool: data.data?.information.formerSchool,
-            typeSchool: data.data?.information.typeSchool,
-            asetNameId: data.data?.asetName.id,
-            campaignId: data.data?.campaign.id,
+            formerSchool: data.data?.information?.formerSchool,
+            typeSchool: data.data?.information?.typeSchool,
+            asetNameId: data.data?.asetName?.id,
+            campaignId: data.data?.campaign?.id,
             cityId: data.data.address.city?.id,
-            cycleId: data.data.cycle.id,
+            cycleId: data.data.cycle?.id,
             semester: data.data?.semester,
         };
     } catch (error) {
@@ -165,13 +165,6 @@ onMounted(async () => {
                 label="Teléfono"
                 name="phone"
                 placeholder="Ingresa un número de teléfono"
-            />
-
-            <FormKit
-                type="tel"
-                label="Teléfono"
-                name="phone2"
-                placeholder="Ingresa un número de teléfono*"
             />
 
             <FormKit
