@@ -63,7 +63,7 @@ const addComment = () => {
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
-            const description = document.getElementById('swal-input1').value
+            const description = document.getElementById('swal-textarea').value
 
             if (!description) {
                 Swal.showValidationMessage('Es necesario escribir un comentario')
