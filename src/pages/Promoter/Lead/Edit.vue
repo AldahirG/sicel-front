@@ -62,6 +62,7 @@ const addComment = () => {
         focusConfirm: false,
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Enviar',
         preConfirm: () => {
             const description = document.getElementById('swal-textarea').value
 
@@ -77,7 +78,7 @@ const addComment = () => {
                 leadId: id
             }
 
-            const response = await lead.comments(commentsData)
+            await lead.comments(commentsData)
 
             Swal.fire(
                 'Enviado!',
