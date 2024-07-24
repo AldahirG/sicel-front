@@ -21,6 +21,9 @@ export default {
             console.log(error);
         }
     },
+    getById(id) {
+        return api.get(`/states/${id}`)
+    },
     update(id, data) {
         try {
             return api.patch(`/states/${id}`, data)

@@ -3,7 +3,7 @@ import { inject , onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import state from '../../../services/state.service';
-import { useCountriesStore } from "../../../store/Admin/countries";
+import country from '../../../services/country.service';
 
 import FormContainer from '../../../components/FormContainer.vue';
 
@@ -13,7 +13,6 @@ const router = useRouter();
 
 const { id } = route.params;
 
-const store = useCountriesStore();
 const countries = ref([]);
 
 const form = ref({
@@ -42,17 +41,21 @@ const handleSubmit = async (form) => {
 }
 
 onMounted(async () => {
-    await store.getAll();
-    countries.value = store.countries;
-
     try {
-        const { data } = await state.getById(id);
+        const { data } = await country.getList();
+        countries.value = data.data || [];
+
+        const { data: stateData } = await state.getById(id);
+
         form.value = {
-            name: data.data.name,
-            countryId: data.data.country.id,
+            name: stateData.data.name,
+            countryId: stateData.data.country.id,
         };
     } catch (error) {
-        router.push({ name: 'admin/states' })
+        toast.open({
+            message: error,
+            type: 'error'
+        })
     }
 })
 
@@ -88,7 +91,7 @@ onMounted(async () => {
                 :options="countries.map(country => ({ label: country.name, value: country.id }))"
                 validation="required"
                 :validation-messages="{
-                required: 'El país es obligatorio.',
+                    required: 'El país es obligatorio.',
                 }"
             />
 
