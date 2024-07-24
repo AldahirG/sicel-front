@@ -3,7 +3,7 @@ import { inject , onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import state from '../../../services/state.service';
-import { useCountriesStore } from "../../../store/Admin/countries";
+import city from '../../../services/city.service';
 
 import FormContainer from '../../../components/FormContainer.vue';
 
@@ -13,17 +13,16 @@ const router = useRouter();
 
 const { id } = route.params;
 
-const store = useCountriesStore();
-const countries = ref([]);
+const states = ref([]);
 
 const form = ref({
     name: '',
-    countryId: '',
+    stateId: '',
 });
 
 const handleSubmit = async (form) => {
     try {
-        const { data } = await state.update(id, form);
+        const { data } = await city.update(id, form);
         const message = data.http.message;
 
         toast.open({
@@ -31,7 +30,7 @@ const handleSubmit = async (form) => {
             type: 'success'
         })
 
-        router.push({ name: 'admin/states'})
+        router.push({ name: 'admin/cities'})
     
     } catch (error) {
         toast.open({
@@ -42,17 +41,20 @@ const handleSubmit = async (form) => {
 }
 
 onMounted(async () => {
-    await store.getAll();
-    countries.value = store.countries;
-
     try {
-        const { data } = await state.getById(id);
+        const { data } = await state.getList();
+        states.value = data.data || [];
+
+        const { data: cityData } = await city.getById(id);
         form.value = {
-            name: data.data.name,
-            countryId: data.data.country.id,
+            name: cityData.data.name,
+            stateId: cityData.data.state.id,
         };
     } catch (error) {
-        router.push({ name: 'admin/states' })
+        toast.open({
+            message: error,
+            type: 'error'
+        })
     }
 })
 
@@ -65,7 +67,7 @@ onMounted(async () => {
             type="form"
             v-model="form"
             :actions="false"
-            incomplete-message="Lo sentimos hubo un error al editar el país." 
+            incomplete-message="Lo sentimos hubo un error al editar la ciudad." 
             @submit="handleSubmit"
         >
             <FormKit 
@@ -82,13 +84,13 @@ onMounted(async () => {
 
             <FormKit
                 type="select"
-                label="País"
-                name="countryId"
-                placeholder="Selecciona un país"
-                :options="countries.map(country => ({ label: country.name, value: country.id }))"
+                label="Estado"
+                name="stateId"
+                placeholder="Selecciona un estado"
+                :options="states.map(state => ({ label: state.name, value: state.id }))"
                 validation="required"
                 :validation-messages="{
-                required: 'El país es obligatorio.',
+                    required: 'El estado es obligatorio.',
                 }"
             />
 

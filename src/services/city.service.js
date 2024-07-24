@@ -20,6 +20,9 @@ export default {
     create(data) {
         return api.post('/cities', data)
     },
+    getById(id) {
+        return api.get(`/cities/${id}`)
+    },
     update(id, data) {
         return api.patch(`/cities/${id}`, data)
     },
