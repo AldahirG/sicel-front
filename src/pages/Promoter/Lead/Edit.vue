@@ -44,7 +44,7 @@ const handleSubmit = async (form) => {
             type: 'success'
         });
 
-        router.push({ name: 'admin/leads' });
+        router.push({ name: 'promoter/leads' });
 
     } catch (error) {
         toast.open({
@@ -85,6 +85,8 @@ const addComment = () => {
                 'Comentario creado con éxito',
                 'success'
             )
+
+            router.push({ name: 'showLeadPromotor', params: { id: id } });
         }
     })
 }

@@ -246,7 +246,7 @@ onMounted(async () => {
         label="Aset Name"
         name="asetNameId"
         placeholder="Selecciona un Aset Name"
-        :options="asetNames.map(asetName => ({ label: [asetName.name + ' - ' + asetName.contactType.name], value: asetName.id }))"
+        :options="asetNames.map(asetName => ({ label: [asetName.contactType.name + ' - ' + asetName.name], value: asetName.id }))"
       />
 
       <FormKit
