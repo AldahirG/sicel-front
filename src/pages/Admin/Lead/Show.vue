@@ -32,6 +32,7 @@ onMounted(async () => {
 
             careerInterest: data.data.information?.careerInterest,
             grade: data.data.grade?.name,
+            dateContact: data.data?.dateContact,
             cycle: data.data.cycle?.cycle,
             formerSchool: data.data.information?.formerSchool,
             typeSchool: data.data.information?.typeSchool,
@@ -68,17 +69,29 @@ onMounted(async () => {
     <section class="w-full mx-auto max-w-[1400px] grid grid-cols-10 auto-rows-auto gap-2 p-5">
         <div class="col-span-10 mb-3">
             <div class="flex flex-col md:flex-row justify-center md:justify-end gap-2">
-                <span class="inline-flex bg-gray-100 text-gray-800 text-xs font-medium items-center px-5 py-3.5 rounded me-2 dark:bg-gray-700 dark:text-gray-400 border border-gray-500 ">
+
+                <span class="inline-block bg-gray-100 text-gray-800 text-xs font-medium items-center px-5 py-3.5 rounded me-2 dark:bg-gray-700 dark:text-gray-400 border border-gray-500 ">
                     <i class="bi bi-calendar-event-fill mr-2"></i>
-                    Fecha primer contacto: <b class="ml-1 text-black dark:text-white"></b>
+                    Fecha primer contacto: 
+                    <b class="ml-1 text-black dark:text-white">
+                        <relative-time
+                            no-title
+                            format="datetime"
+                            tense="auto"
+                            :datetime="lead.dateContact"
+                        >
+                            
+                        </relative-time>
+                        {{ lead.dateContact }}
+                    </b>
                 </span>
 
                 <span class="inline-block bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100 text-sm font-medium me-2 px-5 py-3.5 rounded">
-                    Seguimiento: <b class="text-black dark:text-white"></b>
+                    Seguimiento: <b class="text-black dark:text-white">{{ lead.followUp }}</b>
                 </span>
 
                 <span class="inline-block bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-sm font-medium me-2 px-5 py-3.5 rounded">
-                    Status: <b class="text-black dark:text-white"></b>
+                    Status: <b class="text-black dark:text-white">{{ lead.enrollmentStatus }}</b>
                 </span>
 
             </div>
