@@ -156,7 +156,15 @@ export default {
                     <TableDataCell>{{ lead.cycle?.cycle }}</TableDataCell>
                     <TableDataCell>{{ lead.reference?.type }}</TableDataCell>
                     <TableDataCell>
-                        <relative-time :datetime="lead.updateAt" tense="past"></relative-time>
+                        <relative-time
+                            no-title
+                            format="relative"
+                            tense="past"
+                            :datetime="lead.updateAt"
+                        >
+                            Fecha de actualización
+                        </relative-time>
+
                     </TableDataCell>
                     <TableDataCell class="flex flex-col gap-2 text-center">
 
