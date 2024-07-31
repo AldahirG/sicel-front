@@ -360,6 +360,25 @@ watchEffect(() => {
                     </SideBarLink>
                 </li>
 
+                <li v-if="isAdmin">
+                    <SideBarLink
+                        to="/admin/enrollments" 
+                        :active="isLinkActive('/admin/enrollments')"
+                        class="link"
+                    >
+                        <i 
+                            class="bi bi-star-fill transition-all duration-200 ease-out" 
+                            :class="is_expanded ? 'mr-4' : 'mr-0'">
+                        </i>
+                        <span
+                            :class="is_expanded ? 'opacity-100' : 'opacity-0'"
+                            class="transition-all duration-200 ease-in-out"
+                        >
+                            Inscripciones
+                        </span>
+                    </SideBarLink>
+                </li>
+
                 <!-- Enlaces de promotor -->
                 <div
                     v-if="isPromoter"
