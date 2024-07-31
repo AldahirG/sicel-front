@@ -20,6 +20,10 @@ defineProps({
     borderColor: {
         default: 'border-green-500'
     },
+    height: {
+        type: String,
+        default: 'h-10'
+    }
 })
 
 </script>
@@ -27,7 +31,7 @@ defineProps({
 <template>
     <RouterLink
         :to="{ name: name }"
-        :class="`rounded-lg relative ${width} h-10 cursor-pointer flex items-center border ${borderColor} ${background} group`"
+        :class="`inline-block rounded-lg relative ${width} ${height} cursor-pointer flex items-center border ${borderColor} ${background} group`"
     >
         <span
             class="text-gray-200 font-semibold ml-6 transform group-hover:translate-x-10 group-hover:opacity-0 transition-all duration-300 ease-in-out text-xs">
