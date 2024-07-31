@@ -11,6 +11,7 @@ import { countryRoutes } from './country.routes';
 import { stateRoutes } from './state.routes';
 import { cityRoutes } from './city.routes';
 import { leadRoutes } from './lead.routes';
+import { enrollmentRoutes } from './enrollment/enrollment.routes';
 
 const ROUTE_NAME = 'admin';
 
@@ -48,5 +49,7 @@ export const adminRoutes = [{
         ...cityRoutes,
 
         ...leadRoutes,
+
+        ...enrollmentRoutes,
     ]
 }]
