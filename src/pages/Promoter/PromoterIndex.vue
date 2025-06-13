@@ -1,37 +1,23 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
+import { createSwapy } from "swapy";
 import dashboardService from "../../services/dashboard.service";
 import ChartComponent from "../../components/ChartComponent.vue";
 
+// Swapy y Dark Mode
+const swapyInstance = ref(null);
+const container = ref(null);
+const isDarkMode = ref(localStorage.getItem("darkMode") === "true");
 
-// Función para obtener el token desde las cookies
-function getTokenFromCookies() {
-  const cookies = document.cookie.split("; ");
-  const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
-  return tokenCookie ? tokenCookie.split("=")[1] : null;
-}
+// Alternar modo oscuro y almacenarlo
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value;
+  localStorage.setItem("darkMode", isDarkMode.value);
+};
 
-// Función para decodificar el payload del token JWT
-function decodeToken(token) {
-  try {
-    const payload = atob(token.split(".")[1]); // Decodifica el payload
-    return JSON.parse(payload); // Parsea el JSON del payload
-  } catch (error) {
-    console.error("Error decodificando el token:", error);
-    return null;
-  }
-}
-
-// Extraer el userId desde el token
-const token = getTokenFromCookies();
-const userId = token ? decodeToken(token)?.id : null;
-
-if (!userId) {
-  console.error("Error: No se pudo extraer el userId del token.");
-}
-
-// Referencias para los datos de las gráficas
+// Datos de las gráficas
 const totalByStatus = ref([]);
+const totalByFollowUp = ref([]);
 const totalByCycle = ref([]);
 const totalByCity = ref([]);
 const totalByProgram = ref([]);
@@ -41,16 +27,72 @@ const totalBySemester = ref([]);
 const totalByScholarship = ref([]);
 const totalByContactMedium = ref([]);
 
-// Función para obtener datos del dashboard del promotor
-const fetchPromoterData = async () => {
-  if (!userId) {
-    console.error("Error: userId no disponible.");
-    return;
-  }
+// Totales visibles
+const calculateTotal = (data) => data.reduce((sum, item) => sum + (item.total || 0), 0);
 
+const totalVisibleStatus = computed(() => calculateTotal(totalByStatus.value));
+const totalVisibleFollowUp = computed(() => calculateTotal(totalByFollowUp.value));
+const totalVisibleCycle = computed(() => calculateTotal(totalByCycle.value));
+const totalVisibleCity = computed(() => calculateTotal(totalByCity.value));
+const totalVisibleProgram = computed(() => calculateTotal(totalByProgram.value));
+const totalVisibleCampaign = computed(() => calculateTotal(totalByCampaign.value));
+const totalVisibleSchoolType = computed(() => calculateTotal(totalBySchoolType.value));
+const totalVisibleSemester = computed(() => calculateTotal(totalBySemester.value));
+const totalVisibleScholarship = computed(() => calculateTotal(totalByScholarship.value));
+const totalVisibleContactMedium = computed(() => calculateTotal(totalByContactMedium.value));
+
+// **Evitar errores asegurando que `labels` siempre sea un array válido**
+const chartDataStatus = computed(() => ({
+  labels: totalByStatus.value.length ? totalByStatus.value.map(item => item.status || "Desconocido") : [],
+  datasets: [{ data: totalByStatus.value.length ? totalByStatus.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataFollowUp = computed(() => ({
+  labels: totalByFollowUp.value.length ? totalByFollowUp.value.map(item => item.followUp || "Desconocido") : [],
+  datasets: [{ data: totalByFollowUp.value.length ? totalByFollowUp.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataCycle = computed(() => ({
+  labels: totalByCycle.value.length ? totalByCycle.value.map(item => item.ciclo || "Desconocido") : [],
+  datasets: [{ data: totalByCycle.value.length ? totalByCycle.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataCity = computed(() => ({
+  labels: totalByCity.value.length ? totalByCity.value.map(item => item.ciudad || "Desconocido") : [],
+  datasets: [{ data: totalByCity.value.length ? totalByCity.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataProgram = computed(() => ({
+  labels: totalByProgram.value.length ? totalByProgram.value.map(item => item.programa || "Desconocido") : [],
+  datasets: [{ data: totalByProgram.value.length ? totalByProgram.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataCampaign = computed(() => ({
+  labels: totalByCampaign.value.length ? totalByCampaign.value.map(item => item.campaña || "Desconocido") : [],
+  datasets: [{ data: totalByCampaign.value.length ? totalByCampaign.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataSemester = computed(() => ({
+  labels: totalBySemester.value.length ? totalBySemester.value.map(item => item.semestre || "Desconocido") : [],
+  datasets: [{ data: totalBySemester.value.length ? totalBySemester.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataScholarship = computed(() => ({
+  labels: totalByScholarship.value.length ? totalByScholarship.value.map(item => item.scholarship || "Desconocido") : [],
+  datasets: [{ data: totalByScholarship.value.length ? totalByScholarship.value.map(item => item.total || 0) : [] }]
+}));
+
+const chartDataContactMedium = computed(() => ({
+  labels: totalByContactMedium.value.length ? totalByContactMedium.value.map(item => item.medio_contacto || "Desconocido") : [],
+  datasets: [{ data: totalByContactMedium.value.length ? totalByContactMedium.value.map(item => item.total || 0) : [] }]
+}));
+
+// **Obtener los datos del promotor**
+const fetchPromoterData = async () => {
   try {
     const [
       status,
+      followUp,
       cycle,
       city,
       program,
@@ -61,6 +103,7 @@ const fetchPromoterData = async () => {
       contactMedium,
     ] = await Promise.all([
       dashboardService.getTotalByStatusForPromoter(),
+      dashboardService.getTotalByFollowUpForPromoter(),
       dashboardService.getTotalByCycleForPromoter(),
       dashboardService.getTotalByCityForPromoter(),
       dashboardService.getTotalByProgramForPromoter(),
@@ -71,148 +114,212 @@ const fetchPromoterData = async () => {
       dashboardService.getTotalByContactMediumForPromoter(),
     ]);
 
-    totalByStatus.value = status.data.data || [];
-    totalByCycle.value = cycle.data.data || [];
-    totalByCity.value = city.data.data || [];
-    totalByProgram.value = program.data.data || [];
-    totalByCampaign.value = campaign.data.data || [];
-    totalBySchoolType.value = schoolType.data.data || [];
-    totalBySemester.value = semester.data.data || [];
-    totalByScholarship.value = scholarship.data.data || [];
-    totalByContactMedium.value = contactMedium.data.data || [];
+    totalByStatus.value = status?.data?.data || [];
+    totalByFollowUp.value = followUp?.data?.data || [];
+    totalByCycle.value = cycle?.data?.data || [];
+    totalByCity.value = city?.data?.data || [];
+    totalByProgram.value = program?.data?.data || [];
+    totalByCampaign.value = campaign?.data?.data || [];
+    totalBySchoolType.value = schoolType?.data?.data || [];
+    totalBySemester.value = semester?.data?.data || [];
+    totalByScholarship.value = scholarship?.data?.data || [];
+    totalByContactMedium.value = contactMedium?.data?.data || [];
+
+    await nextTick();
+    initSwapy();
   } catch (error) {
     console.error("Error fetching promoter data:", error.message || error);
   }
 };
 
-// Llama a la función al montar el componente
-onMounted(() => {
-  fetchPromoterData();
+// **Inicializar Swapy**
+const initSwapy = () => {
+  if (swapyInstance.value) {
+    swapyInstance.value.destroy();
+  }
+
+  if (container.value) {
+    swapyInstance.value = createSwapy(container.value, {
+      animation: "dynamic",
+    });
+
+    swapyInstance.value.onSwap((event) => {
+    });
+  }
+};
+
+// **Observar cambios en modo oscuro y actualizar las gráficas**
+watch(isDarkMode, () => {
+});
+
+// **Ejecutar `fetchPromoterData()` en `onMounted`**
+onMounted(async () => {
+  await fetchPromoterData();
 });
 </script>
 
 <template>
-    <div class="dashboard">
-      <h1 class="text-2xl font-bold mb-6 text-center">Dashboard Promotor</h1>
-      <div class="grid grid-cols-3 gap-6">
-        <div v-if="totalByStatus.length" class="chart-container">
+  <div :class="['dashboard', { dark: isDarkMode }]">
+    <!-- Botón para cambiar el modo oscuro -->
+    <div class="dark-mode-toggle">
+      <button @click="toggleDarkMode">
+        {{ isDarkMode ? "🌙 Modo Claro" : "🌑 Modo Oscuro" }}
+      </button>
+    </div>
+
+    <h1 class="text-2xl font-bold mb-6 text-center">Dashboard Promotor</h1>
+
+    <!-- Contenedor principal del grid con Swapy -->
+    <div ref="container" class="grid grid-cols-7 grid-rows-8 gap-4">
+      <!-- Primera fila: Status, Ciclo y Ciudad -->
+      <div v-if="chartDataStatus.labels.length" data-swapy-slot="status" class="chart-container col-span-2 row-span-2">
+        <div data-swapy-item="status">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Status</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByStatus.map(item => item.status),
-              datasets: [{ label: 'Total', data: totalByStatus.map(item => item.total) }]
-            }"
-            chartType="bar"
-          />
+          <ChartComponent :chartData="chartDataStatus" chartType="bar" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleStatus }}</p>
         </div>
-  
-        <div v-if="totalByCycle.length" class="chart-container">
+      </div>
+
+      
+      <div v-if="chartDataFollowUp.labels.length" data-swapy-slot="followUp" class="chart-container col-span-3 row-span-2">
+        <div data-swapy-item="followUp">
+          <h2 class="text-lg font-semibold text-center mb-2">Total por Seguimiento</h2>
+          <ChartComponent :chartData="chartDataFollowUp" chartType="doughnut" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleFollowUp }}</p>
+        </div>
+      </div>
+
+      <div v-if="chartDataCycle.labels.length" data-swapy-slot="cycle" class="chart-container col-span-2 row-span-2">
+        <div data-swapy-item="cycle">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Ciclo</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByCycle.map(item => item.cycle),
-              datasets: [{ label: 'Total', data: totalByCycle.map(item => item.total) }]
-            }"
-            chartType="pie"
-          />
+          <ChartComponent :chartData="chartDataCycle" chartType="pie" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleCycle }}</p>
         </div>
-  
-        <div v-if="totalByCity.length" class="chart-container">
+      </div>
+
+      <div v-if="chartDataCity.labels.length" data-swapy-slot="city" class="chart-container col-span-3 row-span-2">
+        <div data-swapy-item="city">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Ciudad</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByCity.map(item => item.city),
-              datasets: [{ label: 'Total', data: totalByCity.map(item => item.total) }]
-            }"
-            chartType="bar"
-          />
+          <ChartComponent :chartData="chartDataCity" chartType="line" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleCity }}</p>
         </div>
-  
-        <div v-if="totalByProgram.length" class="chart-container">
+      </div>
+
+      <!-- Segunda fila: Programa y Campaña -->
+      <div v-if="chartDataProgram.labels.length" data-swapy-slot="program" class="chart-container col-span-4 row-span-2">
+        <div data-swapy-item="program">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Programa</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByProgram.map(item => item.programa),
-              datasets: [{ label: 'Total', data: totalByProgram.map(item => item.total) }]
-            }"
-            chartType="bar"
-            :chartOptions="{ indexAxis: 'y' }"
-          />
+          <ChartComponent :chartData="chartDataProgram" chartType="bar" :chartOptions="{ indexAxis: 'y' }" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleProgram }}</p>
         </div>
-  
-        <div v-if="totalByCampaign.length" class="chart-container">
+      </div>
+
+      <div v-if="chartDataCampaign.labels.length" data-swapy-slot="campaign" class="chart-container col-span-3 row-span-2">
+        <div data-swapy-item="campaign">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Campaña</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByCampaign.map(item => item.campaña),
-              datasets: [{ label: 'Total', data: totalByCampaign.map(item => item.total) }]
-            }"
-            chartType="doughnut"
-          />
+          <ChartComponent :chartData="chartDataCampaign" chartType="doughnut" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleCampaign }}</p>
         </div>
-  
-        <div v-if="totalBySchoolType.length" class="chart-container">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Tipo de Escuela</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalBySchoolType.map(item => item.tipo_escuela),
-              datasets: [{ label: 'Total', data: totalBySchoolType.map(item => item.total) }]
-            }"
-            chartType="bar"
-          />
-        </div>
-  
-        <div v-if="totalBySemester.length" class="chart-container">
+      </div>
+
+      <!-- Tercera fila: Semestre y Becas -->
+      <div v-if="chartDataSemester.labels.length" data-swapy-slot="semester" class="chart-container col-span-2 row-span-2">
+        <div data-swapy-item="semester">
           <h2 class="text-lg font-semibold text-center mb-2">Total por Semestre</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalBySemester.map(item => item.semestre),
-              datasets: [{ label: 'Total', data: totalBySemester.map(item => item.total) }]
-            }"
-            chartType="line"
-          />
+          <ChartComponent :chartData="chartDataSemester" chartType="pie" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleSemester }}</p>
         </div>
-  
-        <div v-if="totalByScholarship.length" class="chart-container">
+      </div>
+
+      <div v-if="chartDataScholarship.labels.length" data-swapy-slot="scholarship" class="chart-container col-span-3 row-span-2">
+        <div data-swapy-item="scholarship">
           <h2 class="text-lg font-semibold text-center mb-2">Becas Ofertadas</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByScholarship.map(item => item.scholarship),
-              datasets: [{ label: 'Total', data: totalByScholarship.map(item => item.total) }]
-            }"
-            chartType="bar"
-          />
+          <ChartComponent :chartData="chartDataScholarship" chartType="bar" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleScholarship }}</p>
         </div>
-  
-        <div v-if="totalByContactMedium.length" class="chart-container">
+      </div>
+
+      <!-- Cuarta fila: Medios de Contacto -->
+      <div v-if="chartDataContactMedium.labels.length" data-swapy-slot="contactMedium" class="chart-container col-span-2 row-span-2">
+        <div data-swapy-item="contactMedium">
           <h2 class="text-lg font-semibold text-center mb-2">Medios de Contacto</h2>
-          <ChartComponent
-            :chartData="{
-              labels: totalByContactMedium.map(item => item.medio_contacto),
-              datasets: [{ label: 'Total', data: totalByContactMedium.map(item => item.total) }]
-            }"
-            chartType="doughnut"
-          />
+          <ChartComponent :chartData="chartDataContactMedium" chartType="bar" :isDarkMode="isDarkMode" />
+          <p class="text-center mt-2 font-semibold">Total: {{ totalVisibleContactMedium }}</p>
         </div>
       </div>
     </div>
-  </template>
-  
-  <style scoped>
-  .dashboard {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
+  </div>
+</template>
+
+
+<style scoped>
+/* Estilos generales del dashboard */
+.dashboard {
+  padding: 20px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Modo oscuro */
+.dashboard.dark {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+/* Contenedor de las gráficas */
+.chart-container {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+/* Modo oscuro para las gráficas */
+.dashboard.dark .chart-container {
+  background: #2d3748;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Botón de modo oscuro */
+.dark-mode-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.dark-mode-toggle button {
+  background-color: #ffffff;
+  color: #333;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dashboard.dark .dark-mode-toggle button {
+  background-color: #333;
+  color: #ffffff;
+}
+
+/* Ajustes de Swapy */
+[data-swapy-slot] {
+  cursor: grab;
+}
+
+/* Responsive ajustes */
+@media (max-width: 1024px) {
   .grid {
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-rows: auto;
   }
-  .chart-container {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
   }
-  </style>
-  
+}
+</style>

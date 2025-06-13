@@ -5,7 +5,7 @@ export default {
     getAll(page = 1, filters = {}) {
         const params = {
             paginated: true,
-            'per-page': 10,
+            'per-page': 60,
             page,
             ...filters // Incluye los filtros aplicados
         };
@@ -118,7 +118,7 @@ export default {
         return api.get(`/leads/get-by-user/${id}`, { 
             params: {
                 paginated: true,
-                'per-page': 10,
+                'per-page': 60,
                 page,
             },
             headers
@@ -153,11 +153,39 @@ export default {
     
         return api.get(`/leads/get-by-user`, { params, headers });
     },
-    
-    
-        
-    
-    
-    
-    
+
+    getSearchByPhoneOrName(query) {
+    if (!query || query.trim() === "") {
+        console.warn("Query vacío. No se envía la búsqueda.");
+        return Promise.resolve(); // o lanza un error personalizado si prefieres
+    }
+
+    const token = localStorage.getItem("token");
+    const headers = {
+        Authorization: `Bearer ${token}`,
+    };
+
+    return api.get(`/leads/search-by-phone-or-name`, {
+        params: { query },
+        headers,
+    });
+},
+
+getSearchByPhoneOrNameForUser(query) {
+    if (!query || query.trim() === "") {
+        console.warn("Query vacío. No se envía la búsqueda.");
+        return Promise.resolve();
+    }
+
+    const token = localStorage.getItem("token");
+    const headers = {
+        Authorization: `Bearer ${token}`,
+    };
+
+    return api.get(`/leads/search-my-leads`, {
+        params: { query },
+        headers,
+    });
+}
+
 };

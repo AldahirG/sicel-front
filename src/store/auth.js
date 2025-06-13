@@ -18,7 +18,7 @@ export const useAuthStore = defineStore("auth", {
                 });
                 
                 Cookies.set('token', response.data.data.token, { expires: 1 });
-                
+                localStorage.setItem('token', response.data.data.token); // <-- añade esto
                 const roles = response.data.data.roles;
 
                 if (roles.includes('Administrador')) {
@@ -27,8 +27,11 @@ export const useAuthStore = defineStore("auth", {
                     this.router.push('/promoter');
                 }
 
+                return true;
+
             } catch (error) {
                 console.log('Error al iniciar sesión', error);
+                return false;
             }
         },
         async getAuthUser() {

@@ -27,6 +27,7 @@ export default {
 
     return api.get('/dashboard/status', { headers });
   },
+  
 
   getTotalByCycle() {
     const token = localStorage.getItem('token');
@@ -113,6 +114,10 @@ export default {
   // Métodos para el promotor
   getTotalByStatusForPromoter() {
     return api.get(`/dashboard/promoter/status`, { headers: getHeaders() });
+  },
+
+  getTotalByFollowUpForPromoter() {
+    return api.get(`/dashboard/promoter/followup`, { headers: getHeaders() });
   },
 
   getTotalByCycleForPromoter() {

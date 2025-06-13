@@ -5,7 +5,7 @@ export default {
         return api.get('/countries', { 
             params: {
                 paginated: true,
-                'per-page': 10,
+                'per-page': 100,
                 page: page,
             }
         });
