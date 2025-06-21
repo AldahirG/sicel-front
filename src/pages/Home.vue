@@ -1,29 +1,57 @@
 <script setup>
 import { ref, watchEffect } from "vue";
+import Swal from "sweetalert2";
 import { useAuthStore } from "../store/auth";
 import TextInput from "./../components/Auth/TextInput.vue";
 import InputLabel from "./../components/Auth/InputLabel.vue";
 
+const authStore = useAuthStore();
+
 const theme = ref(localStorage.getItem('theme') || 'light');
 const isChecked = ref(theme.value === 'dark');
+
 const handleToggle = () => {
   isChecked.value = !isChecked.value;
   theme.value = isChecked.value ? 'dark' : 'light';
 };
 
-const authStore = useAuthStore();
-
 const form = ref({
   email: "",
   password: "",
-})
-
-watchEffect(() => {
-  localStorage.setItem('theme', theme.value);
-  document.querySelector('html').setAttribute('data-theme', theme.value);
 });
 
+const showPassword = ref(false);
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
+
+
+const handleLogin = async () => {
+  const success = await authStore.signIn(form.value); // .value para acceder al ref
+
+  if (success) {
+    Swal.fire({
+      icon: "success",
+      title: "Bienvenido",
+      text: "Inicio de sesión exitoso",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Error al iniciar sesión",
+      text: "Credenciales incorrectas o error del servidor",
+    });
+  }
+};
+
+watchEffect(() => {
+  localStorage.setItem("theme", theme.value);
+  document.querySelector("html").setAttribute("data-theme", theme.value);
+});
 </script>
+
 
 <template>
   <!-- Toggle DarkMode -->
@@ -47,7 +75,7 @@ watchEffect(() => {
         <!-- Imagen representativa -->
         <div class="hidden lg:block h-full w-1/2">
           <figure class="h-full w-full">
-            <img src="/uninterlogo.webp" alt="logo-uninter" class="w-full h-full object-cover" />
+            <img src="/public/uninterlogo.png" alt="logo-uninter" class="w-full h-full object-cover" />
           </figure>
         </div>
         <!-- Formulario -->
@@ -56,7 +84,7 @@ watchEffect(() => {
             <div class="my-10">
               <div class="flex justify-center w-full pb-6">
                 <figure class="block lg:hidden w-28 h-28">
-                  <img src="/Uninter - Logo (Responsive).webp" alt="logo-uninter" />
+                  <img src="/public/Uninter - Logo (Responsive).png" alt="logo-uninter" />
                 </figure>
               </div>
               <h2 class="text-black dark:text-white text-center text-lg md:text-2xl font-bold uppercase transition-colors duration-300 ease-out">
@@ -68,38 +96,59 @@ watchEffect(() => {
             </div>
 
             <div class="w-full max-w-xs md:max-w-xl lg:max-w-md">
-              <form @submit.prevent="() => authStore.signIn(form)">
-                <div>
-                  <InputLabel for="email" value="Correo Electrónico" />
-                  <TextInput 
-                    id="email" 
-                    v-model="form.email" 
-                    type="email" 
-                    class="mt-1 block w-full"
-                    placeholder="Ingrese su correo electrónico" autofocus autocomplete="email" 
-                  />
-                </div>
+<form @submit.prevent="handleLogin">
+  <div>
+    <InputLabel for="email" value="Correo Electrónico" />
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+        📧
+      </span>
+      <TextInput 
+        id="email" 
+        v-model="form.email" 
+        type="email" 
+        class="pl-10 mt-1 block w-full"
+        placeholder="Ingrese su correo electrónico" 
+        autofocus 
+        autocomplete="email" 
+      />
+    </div>
+  </div>
 
-                <div class="mt-4">
-                  <InputLabel for="password" value="Contraseña" />
-                  <TextInput 
-                    id="password" 
-                    v-model="form.password" 
-                    type="password" 
-                    class="mt-1 block w-full"
-                    placeholder="Ingrese su contraseña" 
-                  />
-                </div>
+  <div class="mt-4">
+    <InputLabel for="password" value="Contraseña" />
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+        🔒
+      </span>
+      <TextInput 
+        id="password" 
+        v-model="form.password" 
+        :type="showPassword ? 'text' : 'password'" 
+        class="pl-10 mt-1 block w-full"
+        placeholder="Ingrese su contraseña" 
+      />
+      <button
+        type="button"
+        @click="togglePassword"
+        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+        tabindex="-1"
+      >
+        {{ showPassword ? '🙈' : '👁️' }}
+      </button>
+    </div>
+  </div>
 
-                <div class="flex mt-10">
-                  <button 
-                    type="submit"
-                    class="inline-block py-3 w-full text-white bg-regal-blue-900 hover:bg-regal-blue-950 lg:bg-fiord-700 lg:hover:bg-fiord-800 lg:dark:hover: rounded-3xl duration-200"
-                  >
-                    Iniciar Sesión
-                  </button>
-                </div>
-              </form>
+  <div class="flex mt-10">
+    <button 
+      type="submit"
+      class="inline-block py-3 w-full text-white bg-regal-blue-900 hover:bg-regal-blue-950 lg:bg-fiord-700 lg:hover:bg-fiord-800 lg:dark:hover: rounded-3xl duration-200"
+    >
+      Iniciar Sesión
+    </button>
+  </div>
+</form>
+
             </div>
           </div>
         </div>

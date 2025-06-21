@@ -6,7 +6,7 @@ export default {
             return api.get('/cities', { 
                 params: {
                     paginated: true,
-                    'per-page': 10,
+                    'per-page': 100,
                     page: page,
                 }
             });

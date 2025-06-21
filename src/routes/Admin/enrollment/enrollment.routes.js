@@ -12,8 +12,13 @@ export const enrollmentRoutes = [{
         },
         {
             path: ':id/edit',
-            name: 'editEnrollment',
+            name: 'admin/editEnrollment',
             component: () => import('../../../pages/Admin/Enrollment/Edit.vue'),
+        },
+        {
+            path: 'show/:id',
+            name: 'admin/showEnrollment',
+            component: () => import('../../../pages/Admin/Enrollment/ShowEnrollment.vue'),
         },
 
         ...promotionRoutes,
