@@ -8,15 +8,14 @@ export const promoterRoutes = [{
   path: `/${ROUTE_NAME}`,
   component: () => import('../../layouts/DashboardLayout.vue'),
   beforeEnter: [promoterGuard],
-  meta: { roles: ['Promotor'] }, // ✅ Meta en layout principal
+  meta: { roles: ['Promotor'] },
   children: [
     {
       path: '',
       name: 'promoter',
       component: () => import('../../pages/Promoter/PromoterIndex.vue'),
-      meta: { roles: ['Promotor'] }, // ✅ Meta en vista principal
+      meta: { roles: ['Promotor'] },
     },
-    // Aplicamos meta a cada ruta hija
     ...leadRoutes.map(route => ({
       ...route,
       meta: { ...(route.meta || {}), roles: ['Promotor'] }

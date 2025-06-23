@@ -11,54 +11,61 @@ export const useAuthStore = defineStore("auth", {
     authUser: null,
   }),
   actions: {
-    async signIn(data) {
-      try {
-        const response = await axios.post(`${baseURL}/auth/login`, {
-          email: data.email,
-          password: data.password,
-        });
+async signIn(data) {
+  try {
+    const response = await axios.post(`${baseURL}/auth/login`, {
+      email: data.email,
+      password: data.password,
+    });
 
-        // Guarda el token en cookies y localStorage
-        Cookies.set('token', response.data.data.token, { expires: 1 });
-        localStorage.setItem('token', response.data.data.token);
+    // Guarda token
+    Cookies.set('token', response.data.data.token, { expires: 1 });
+    localStorage.setItem('token', response.data.data.token);
 
-        const roles = response.data.data.roles;
+    // ✅ Forzar carga del authUser ANTES de redirigir
+    await this.getAuthUser();
 
-        // 🔐 Redirección basada en el rol
-        if (roles.includes('Administrador')) {
-          router.push('/admin');
-        } else if (roles.includes('Promotor')) {
-          router.push('/promoter');
-        } else {
-          router.push('/unauthorized');
-        }
+    const roles = this.authUser.roles;
 
-        return true;
-      } catch (error) {
-        console.log('Error al iniciar sesión', error);
-        return false;
+    if (roles.includes('Administrador')) {
+      router.push('/admin');
+    } else if (roles.includes('Promotor')) {
+      router.push('/promoter');
+    } else {
+      router.push('/unauthorized');
+    }
+
+    return true;
+  } catch (error) {
+    console.log('Error al iniciar sesión', error);
+    return false;
+  }
+}
+,
+
+async getAuthUser() {
+  try {
+    const token = Cookies.get('token');
+    const response = await axios.get(`${baseURL}/auth/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    },
+    });
 
-    async getAuthUser() {
-      try {
-        const token = Cookies.get('token');
-        const response = await axios.get(`${baseURL}/auth/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+    this.authUser = {
+      ...response.data.data,
+      roles: response.data.data.roles.map(r => typeof r === 'string' ? r : r.name)
+    };
 
-        this.authUser = response.data.data;
-        console.log('Auth User desde getAuthUser:', this.authUser);
+    console.log('Auth User desde getAuthUser:', this.authUser);
 
-        return response.data.data.roles;
-        
-      } catch (error) {
-        console.log('Error al obtener datos del usuario autenticado', error);
-        return [];
-      }
-    },
+    return this.authUser.roles;
+
+  } catch (error) {
+    console.log('Error al obtener datos del usuario autenticado', error);
+    return [];
+  }
+},
 
     async logout() {
       try {

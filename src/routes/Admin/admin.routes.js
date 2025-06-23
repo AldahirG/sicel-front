@@ -13,48 +13,81 @@ import { cityRoutes } from './city.routes';
 import { leadRoutes } from './lead.routes';
 import { enrollmentRoutes } from './enrollment/enrollment.routes';
 import { listRoutes } from './enrollment/list.routes';
-import {channelRoutes} from './enrollment/channel.routes';
-
+import { channelRoutes } from './enrollment/channel.routes';
 
 const ROUTE_NAME = 'admin';
 
 export const adminRoutes = [{
-    path: `/${ROUTE_NAME}`,
-    component: () => import('../../layouts/DashboardLayout.vue'),
-    beforeEnter: [ adminGuard ],
-    children: [
-        {
-            path: `/${ROUTE_NAME}`,
-            name: 'admin',
-            component: () => import('../../pages/Admin/AdminIndex.vue'),
-        },
-        
-        ...userRoutes,
-
-        ...careerRoutes,
-
-        ...campaignRoutes,
-
-        ...followUpRoutes,
-
-        ...gradeRoutes,
-
-        ...contactMediumRoutes,
-
-        ...asetNameRoutes,
-
-        ...cycleRoutes,
-
-        ...countryRoutes,
-
-        ...stateRoutes,
-
-        ...cityRoutes,
-
-        ...leadRoutes,
-
-        ...enrollmentRoutes,
-        ...listRoutes,
-        ...channelRoutes,
-    ]
-}]
+  path: `/${ROUTE_NAME}`,
+  component: () => import('../../layouts/DashboardLayout.vue'),
+  beforeEnter: [adminGuard],
+  meta: { roles: ['Administrador'] }, // ✅ obligatorio
+  children: [
+    {
+      path: '',
+      name: 'admin',
+      component: () => import('../../pages/Admin/AdminIndex.vue'),
+      meta: { roles: ['Administrador'] },
+    },
+    ...userRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...careerRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...campaignRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...followUpRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...gradeRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...contactMediumRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...asetNameRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...cycleRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...countryRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...stateRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...cityRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...leadRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...enrollmentRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...listRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+    ...channelRoutes.map(route => ({
+      ...route,
+      meta: { ...(route.meta || {}), roles: ['Administrador'] }
+    })),
+  ]
+}];

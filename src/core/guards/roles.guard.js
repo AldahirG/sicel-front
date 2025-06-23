@@ -1,35 +1,23 @@
-import { useAuthStore } from '../../store/auth.js';
+import { useAuthStore } from '../../store/auth';
 
-const adminGuard = async (to, from, next) => {
-    try {
-        const authStore = useAuthStore();
-        const roles = await authStore.getAuthUser();
-
-        if (roles.includes('Administrador')) {
-            next();
-        } else {
-            next({ name: 'Unauthorized' });
-        }
-    } catch (error) {
-        console.error('Error al obtener los roles del usuario:', error);
-        next({ name: 'Unauthorized' });
-    }
+const hasRole = (requiredRole) => {
+  const authStore = useAuthStore();
+  const userRoles = authStore.authUser?.roles || [];
+  return userRoles.includes(requiredRole);
 };
 
-const promoterGuard = async (to, from, next) => {
-    try {
-        const authStore = useAuthStore();
-        const roles = await authStore.getAuthUser();
+const adminGuard = (to, from, next) => {
+  if (hasRole('Administrador')) {
+    return next();
+  }
+  return next({ name: 'Unauthorized' });
+};
 
-        if (roles.includes('Promotor')) {
-            next();
-        } else {
-            next({ name: 'Unauthorized' });
-        }
-    } catch (error) {
-        console.error('Error al obtener los roles del usuario:', error);
-        next({ name: 'Unauthorized' });
-    }
+const promoterGuard = (to, from, next) => {
+  if (hasRole('Promotor')) {
+    return next();
+  }
+  return next({ name: 'Unauthorized' });
 };
 
 export { adminGuard, promoterGuard };

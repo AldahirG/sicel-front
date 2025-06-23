@@ -95,7 +95,6 @@ onMounted(async () => {
         };
     } catch (error) {
         console.log(error)
-        // router.push({ name: 'admin/leads' })
     }
 })
 
