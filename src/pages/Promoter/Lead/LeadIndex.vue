@@ -543,9 +543,10 @@ onMounted(() => {
     <TableDataCell>{{ lead.asetName?.contactType || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.asetName?.name || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.campaign?.name || lead.campaignId || "Sin información" }}</TableDataCell>
-    <TableDataCell>{{ lead.city?.state?.country?.name || "Sin información" }}</TableDataCell>
-    <TableDataCell>{{ lead.city?.state?.name || "Sin información" }}</TableDataCell>
-    <TableDataCell>{{ lead.city?.name || "Sin información" }}</TableDataCell>
+    <TableDataCell>{{ lead.address?.country?.name || "Sin información" }}</TableDataCell>
+    <TableDataCell>{{ lead.address?.state || "Sin información" }}</TableDataCell>
+    <TableDataCell>{{ lead.address?.city || "Sin información" }}</TableDataCell>
+
     <TableDataCell>{{ lead.cycle?.cycle || lead.cycleId || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.reference?.type || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.reference?.name || "Sin información" }}</TableDataCell>

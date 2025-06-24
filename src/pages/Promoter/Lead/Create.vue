@@ -16,6 +16,10 @@ import { useCyclesStore } from '../../../store/Admin/cycles';
 
 import InputGroup from "../../../components/InputGroup.vue";
 import FormRow from "../../../components/FormRow.vue";
+import LocationSelect from "../../../components/LocationSelect.vue";
+
+
+
 const FormContainer = defineAsyncComponent(() =>
   import('../../../components/FormContainer.vue')
 );
@@ -30,7 +34,14 @@ const asetNames = ref([]);
 const campaigns = ref([]);
 const cities = ref([]);
 const cycles = ref([]);
-const form = ref({});
+const form = ref({
+  location: {
+    countryId: '',
+    stateId: '',
+    cityId: ''
+  },
+  // ...otros campos existentes
+});
 
 const personalUninterList = [
   "ADRIAN MOLINA", "ALEJANDRA RIVAS", "ALDAHIR GOMEZ", "ANALIT ROMAN ARCE", "ANGELICA NIETO",
@@ -49,13 +60,17 @@ const handleSubmit = async (form) => {
     );
 
     const mapper = LeadResource(filteredForm);
+    // mapper.dateContact = new Date().toISOString(); // ⏰ fecha actual
     mapper.name = mapper.name?.trim();
     mapper.formerSchool = mapper.formerSchool?.trim();
-
     // 🔧 Asegura que sean arrays de strings
  mapper.phone = form.phone ? [String(form.phone)] : undefined;
 mapper.email = form.email ? [String(form.email)] : undefined;
 
+ // Añade país, estado y ciudad desde `form.location`
+    mapper.countryId = form.location?.countryId;
+    mapper.stateId = form.location?.stateId;
+    mapper.cityId = form.location?.cityId;
 
     const { data } = await lead.create(mapper);
     console.log('Formulario mapeado:', mapper);
@@ -282,12 +297,8 @@ onMounted(async () => {
         :options="[{ label: 'Selecciona una campaña', value: '' }, ...campaigns.map(c => ({ label: c.name, value: c.id }))]"
       />
 
-      <FormKit
-        type="select"
-        name="cityId"
-        label="Ciudad"
-        :options="[{ label: 'Selecciona una ciudad', value: '' }, ...cities.map(c => ({ label: c.name, value: c.id }))]"
-      />
+      <LocationSelect v-model="form.location" />
+
 
       <InputGroup>
         <FormRow>
@@ -302,7 +313,7 @@ onMounted(async () => {
           <FormKit
             type="select"
             name="semester"
-            label="Semestre de ingreso"
+            label="Semestre/Cuatrimestre/Año de ingreso"
             :options="[ 
               { label: 'Selecciona un semestre', value: '' },
               '1','2','3','4','5','6','7','8','9','10','NO ESPECIFICADO','OTRO'
