@@ -234,13 +234,19 @@ onMounted(() => {
             <ColumnFilter field="information.followUp.name" :leads="leads" @filter-applied="handleHeaderFilter" />
           </TableHeaderCell>
           <TableHeaderCell>
-            Carrera
+            Carrera interes
             <ColumnFilter field="information.careerInterest" :leads="leads" @filter-applied="handleHeaderFilter" />
           </TableHeaderCell>
           <TableHeaderCell>
             Grado Escolar
             <ColumnFilter field="grade.name" :leads="leads" @filter-applied="handleHeaderFilter" />
           </TableHeaderCell>
+          <TableHeaderCell>
+       Programa
+       <template #filter-icon>
+         <ColumnFilter field="program" :leads="leads" @filter-applied="handleHeaderFilter" />
+       </template>
+     </TableHeaderCell>
           <TableHeaderCell>Teléfono</TableHeaderCell>
           <TableHeaderCell>Correo Electrónico</TableHeaderCell>
           <TableHeaderCell>
@@ -271,6 +277,12 @@ onMounted(() => {
             Beca
             <ColumnFilter field="scholarship" :leads="leads" @filter-applied="handleHeaderFilter" />
           </TableHeaderCell>
+           <TableHeaderCell>
+      Interno/Externo
+      <template #filter-icon>
+        <ColumnFilter field="intern" :leads="leads" @filter-applied="handleHeaderFilter" />
+      </template>
+    </TableHeaderCell>
           <TableHeaderCell>Última modificación</TableHeaderCell>
           <TableHeaderCell>Acciones</TableHeaderCell>
         </TableRow>
@@ -289,6 +301,8 @@ onMounted(() => {
           <TableDataCell>{{ lead.information?.followUp?.name || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.information?.careerInterest || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.grade?.name || 'Sin información' }}</TableDataCell>
+          <TableDataCell>{{ lead.program || "Sin información" }}</TableDataCell>
+
           <TableDataCell>{{ lead.phones?.join(', ') || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.emails?.[0] || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.asetName?.contactType || 'Sin información' }}</TableDataCell>
@@ -298,6 +312,8 @@ onMounted(() => {
           <TableDataCell>{{ lead.address?.state || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.address?.city || 'Sin información' }}</TableDataCell>
           <TableDataCell>{{ lead.scholarship || 'Sin información' }}</TableDataCell>
+          <TableDataCell>{{ lead.intern || "Sin información" }}</TableDataCell>
+
           <TableDataCell>
             <relative-time no-title format="relative" tense="past" :datetime="lead.updateAt">
               Fecha de actualización

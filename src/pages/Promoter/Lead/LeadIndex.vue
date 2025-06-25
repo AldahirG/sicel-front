@@ -442,6 +442,14 @@ onMounted(() => {
         <ColumnFilter field="grade.name" :leads="leads" @filter-applied="handleHeaderFilter" />
       </template>
     </TableHeaderCell>
+     <TableHeaderCell>
+       Programa
+       <template #filter-icon>
+         <ColumnFilter field="program" :leads="leads" @filter-applied="handleHeaderFilter" />
+       </template>
+     </TableHeaderCell>
+
+
     <TableHeaderCell>
       Escuela de procedencia
       <template #filter-icon>
@@ -458,6 +466,12 @@ onMounted(() => {
       Semestre a ingresar
       <template #filter-icon>
         <ColumnFilter field="semester" :leads="leads" @filter-applied="handleHeaderFilter" />
+      </template>
+    </TableHeaderCell>
+    <TableHeaderCell>
+      Interno/Externo
+      <template #filter-icon>
+        <ColumnFilter field="intern" :leads="leads" @filter-applied="handleHeaderFilter" />
       </template>
     </TableHeaderCell>
     <TableHeaderCell>
@@ -537,9 +551,12 @@ onMounted(() => {
     <TableDataCell>{{ lead.emails?.[0] || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.information?.careerInterest || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.grade?.name || lead.gradesId || "Sin información" }}</TableDataCell>
+    <TableDataCell>{{ lead.program || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.information?.formerSchool || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.information?.typeSchool || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.semester || "Sin información" }}</TableDataCell>
+    <TableDataCell>{{ lead.intern || "Sin información" }}</TableDataCell>
+
     <TableDataCell>{{ lead.asetName?.contactType || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.asetName?.name || "Sin información" }}</TableDataCell>
     <TableDataCell>{{ lead.campaign?.name || lead.campaignId || "Sin información" }}</TableDataCell>

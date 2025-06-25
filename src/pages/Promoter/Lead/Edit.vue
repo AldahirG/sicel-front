@@ -15,11 +15,14 @@ import grade from "../../../services/grade.service";
 import list from "../../../services/list.service";
 import promotion from "../../../services/promotion.service";
 import LocationSelect from "../../../components/LocationSelect.vue";
-
-
+import { useSortedFormData } from "../../../composables/useSortedFormData";
 import FormContainer from "../../../components/FormContainer.vue";
 import FormRow from "../../../components/FormRow.vue";
 import InputGroup from "../../../components/InputGroup.vue";
+import countryService from "../../../services/country.service";
+import stateService from "../../../services/state.service";
+import cityService from "../../../services/city.service";
+
 
 
 const toast = inject("toast");
@@ -27,12 +30,10 @@ const route = useRoute();
 const router = useRouter();
 const { id } = route.params;
 
-
 const followUps = ref([]);
 const grades = ref([]);
 const asetNames = ref([]);
 const campaigns = ref([]);
-const cities = ref([]);
 const cycles = ref([]);
 const lists = ref([]);
 const channels = ref([]);
@@ -41,6 +42,10 @@ const promotions = ref([]);
 const enrollmentData = ref(null);
 const isLoadingEnrollment = ref(false);
 const isSaving = ref(false);
+const countries = ref([]);
+const states = ref([]);
+const cities = ref([]);
+
 
 // Objeto base para resetear el formulario de inscripción
 const baseEnrollmentForm = {
@@ -66,9 +71,10 @@ const form = ref({
     stateId: "",
     cityId: "",
   },
+  program: "",
+  intern: "",
   ...baseEnrollmentForm, // otros campos
 });
-
 
 const personalUninterList = [
   "ADRIAN MOLINA", "ALEJANDRA RIVAS", "ALDAHIR GOMEZ", "ANALIT ROMAN ARCE", "ANGELICA NIETO",
@@ -79,27 +85,60 @@ const personalUninterList = [
   "YOALI APARICIO", "YANIN VAZQUEZ"
 ].sort((a, b) => a.localeCompare(b)).concat("NINGUNO DE LOS ANTERIORES");
 
-
 const isFormDisabled = computed(() => {
     return enrollmentData.value !== null || isLoadingEnrollment.value;
 });
 
 const handleSubmit = async (form) => {
   try {
-    form.countryId = form.location?.countryId || "";
-    form.stateId = form.location?.stateId || "";
-    form.cityId = form.location?.cityId || "";
-
+    // Ya no es necesario asignar desde form.location
     const mapper = LeadResource(form);
-
     const { data } = await lead.update(id, mapper);
 
     toast.open({ message: data.http.message, type: "success" });
     router.push({ name: "promoter/leads" });
   } catch (error) {
-    toast.open({ message: error.response?.data?.message || "Error inesperado", type: "error" });
+    toast.open({
+      message: error.response?.data?.message || "Error inesperado",
+      type: "error",
+    });
   }
 };
+
+
+const selectedCountry = computed(() =>
+  countries.value.find(c => c.id === form.value.countryId)
+);
+
+const isMexico = computed(() => {
+  const name = selectedCountry.value?.name || "";
+  return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase() === "MEXICO";
+});
+
+watch(() => form.value.countryId, async (newVal) => {
+  form.value.stateId = "";
+  form.value.cityId = "";
+  cities.value = [];
+
+  if (newVal) {
+    const response = await stateService.getByCountry(newVal);
+    states.value = response.data.data;
+  } else {
+    states.value = [];
+  }
+});
+
+watch(() => form.value.stateId, async (newVal) => {
+  form.value.cityId = "";
+
+  if (newVal) {
+    const response = await cityService.getByState(newVal);
+    cities.value = response.data.data;
+  } else {
+    cities.value = [];
+  }
+});
+
 
 
 const fetchEnrollmentData = async () => {
@@ -115,7 +154,6 @@ if (response && response.data && Array.isArray(response.data.data)) {
 
   if (matchingEnrollment) {
     enrollmentData.value = matchingEnrollment;
-
     form.value.programa = matchingEnrollment.Career?.id || "";
     form.value.estrategia = matchingEnrollment.Promotion?.id || "";
     form.value.canalVenta = matchingEnrollment.Channel?.id || "";
@@ -169,7 +207,6 @@ watch(form, (val) => {
   form.value.formerSchool = normalizeBeta(val.formerSchool);
   form.value.comments = normalizeAlpha(val.comments);
   form.value.dataSource = normalizeAlpha(val.dataSource);
-
   form.value.matricula = normalizeAlphanumeric(val.matricula);
   form.value.folio = normalizeAlphanumeric(val.folio);
   form.value.curp = normalizeAlphanumeric(val.curp);
@@ -330,6 +367,11 @@ const loadLeadAndEnrollmentData = async () => {
     careers.value = (await career.getAll()).data.data.sort((a, b) => a.program.localeCompare(b.program));
     promotions.value = (await promotion.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
 
+    // 🌍 Ubicación ordenada (asegúrate que tienes importado countryService, stateService, cityService)
+    countries.value = (await countryService.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    states.value = (await stateService.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    cities.value = (await cityService.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+
     const { data } = await lead.getById(route.params.id);
     const leadInfo = data.data;
 
@@ -348,7 +390,6 @@ const loadLeadAndEnrollmentData = async () => {
     form.value.typeSchool = leadInfo.information?.typeSchool;
     form.value.asetNameId = leadInfo.asetName?.id;
     form.value.campaignId = leadInfo.campaign?.id;
-    form.value.city = leadInfo.address?.city;
     form.value.cycleId = leadInfo.cycle?.id;
     form.value.semester = leadInfo?.semester || "";
     form.value.type = leadInfo.reference?.type || "NINGUNO";
@@ -357,20 +398,30 @@ const loadLeadAndEnrollmentData = async () => {
     form.value.showNameReferenceField = ["ALUMNO", "FAMILIAR_ALUMNO"].includes(leadInfo.reference?.type);
     form.value.showNameReferenceSelect = leadInfo.reference?.type === "PERSONAL_UNINTER";
     form.value.showAdditionalFields = followUpName === "INSC-INSCRIPCIÓN";
-    form.value.countryId = leadInfo.address?.country?.id || "";
-    form.value.stateId = leadInfo.address?.state?.id || "";
-    form.value.cityId = leadInfo.address?.city?.id || "";
 
+// Asignar correctamente la ubicación desde el lead
+form.value.location = {
+  countryId: leadInfo.address?.country?.id || "",
+  stateId: leadInfo.address?.state || "", // ← texto directo
+  cityId: leadInfo.address?.city || "",   // ← texto directo
+};
 
-    // 🔥 Asegurar que los datos de inscripción viejos no contaminen
+// También reflejamos esos valores en los campos individuales (para compatibilidad)
+form.value.countryId = form.value.location.countryId;
+form.value.stateId = form.value.location.stateId;
+form.value.cityId = form.value.location.cityId;
+
+console.log("Ubicación del lead:", form.value.location);
+
+    form.value.program = leadInfo?.program || "";
+    form.value.intern = leadInfo?.intern || "";
+
     enrollmentData.value = null;
 
-    // ✅ Si se va a mostrar formulario de inscripción pero aún no hay inscripción previa, limpiar campos
     if (form.value.showAdditionalFields) {
       Object.assign(form.value, baseEnrollmentForm);
     }
 
-    // 🧠 Ahora sí, busca si realmente hay inscripción registrada
     await fetchEnrollmentData();
 
   } catch (error) {
@@ -382,16 +433,104 @@ const loadLeadAndEnrollmentData = async () => {
       showAdditionalFields: false,
       showNameReferenceField: false,
       showNameReferenceSelect: false,
+      location: { countryId: "", stateId: "", cityId: "" },
       ...baseEnrollmentForm,
     };
     enrollmentData.value = null;
   }
+  await resolveStateAndCityFromText();
+
 };
 
+const resolveStateAndCityFromText = async () => {
+  if (!isMexico.value) return;
+
+  // Solo si los valores son texto plano (no IDs)
+  const currentStateText = form.value.stateId;
+  const currentCityText = form.value.cityId;
+
+  // Buscar estado por nombre
+  const matchedState = states.value.find(
+    s => s.name.toUpperCase() === currentStateText.toUpperCase()
+  );
+
+  if (matchedState) {
+    form.value.stateId = matchedState.id;
+
+    // Obtener ciudades si aún no se cargaron o no corresponden
+    if (!cities.value.length || cities.value[0].stateId !== matchedState.id) {
+      const cityRes = await cityService.getByState(matchedState.id);
+      cities.value = cityRes.data.data;
+    }
+
+    const matchedCity = cities.value.find(
+      c => c.name.toUpperCase() === currentCityText.toUpperCase()
+    );
+
+    if (matchedCity) {
+      form.value.cityId = matchedCity.id;
+    }
+  }
+};
 
 
 onMounted(async () => {
     await loadLeadAndEnrollmentData();
+
+    const countryResponse = await countryService.getAll();
+countries.value = countryResponse.data.data;
+
+// Actualizar los estados y ciudades si el país es MÉXICO
+if (form.value.countryId) {
+  const stateRes = await stateService.getByCountry(form.value.countryId);
+  states.value = stateRes.data.data;
+
+  if (isMexico.value && typeof form.value.stateId === 'string') {
+    const matchedState = states.value.find(
+      s => s.name.toUpperCase() === form.value.stateId.toUpperCase()
+    );
+    if (matchedState) {
+      form.value.stateId = matchedState.id;
+
+      const cityRes = await cityService.getByState(matchedState.id);
+      cities.value = cityRes.data.data;
+
+      if (typeof form.value.cityId === 'string') {
+        const matchedCity = cities.value.find(
+          c => c.name.toUpperCase() === form.value.cityId.toUpperCase()
+        );
+        if (matchedCity) {
+          form.value.cityId = matchedCity.id;
+        }
+      }
+    }
+  }
+}
+
+
+if (form.value.stateId) {
+  const cityRes = await cityService.getByState(form.value.stateId);
+  cities.value = cityRes.data.data;
+}
+
+// Si país es MÉXICO, y tenemos nombres de estado/ciudad, convertirlos a sus IDs
+if (isMexico.value) {
+  const matchedState = states.value.find(
+    s => s.name.toUpperCase() === form.value.stateId.toUpperCase()
+  );
+  if (matchedState) {
+    form.value.stateId = matchedState.id;
+
+    const matchedCity = cities.value.find(
+      c => c.name.toUpperCase() === form.value.cityId.toUpperCase()
+    );
+    if (matchedCity) {
+      form.value.cityId = matchedCity.id;
+    }
+  }
+}
+
+
 });
 </script>
 
@@ -423,7 +562,7 @@ onMounted(async () => {
       <FormKit
         type="text"
         name="name"
-        label="Nombre"
+        label="Nombre completo"
         placeholder="Nombre completo"
       />
 
@@ -487,6 +626,18 @@ onMounted(async () => {
             :options="grades.map((g) => ({ label: g.name, value: g.id }))"
           />
         </FormRow>
+        <FormRow>
+        <FormKit
+  type="select"
+  label="Programa"
+  name="program"
+  placeholder="Selecciona una opción"
+  :options="careers.map((c) => ({ label: c.program, value: c.program }))"
+  v-model="form.program"
+/>
+
+          </FormRow>
+
       </InputGroup>
 
       <FormKit
@@ -556,7 +707,59 @@ onMounted(async () => {
         :options="campaigns.map((c) => ({ label: c.name, value: c.id }))"
       />
 
-      <LocationSelect v-model="form.location" />
+<InputGroup>
+  <FormRow>
+    <FormKit
+      type="select"
+      label="País"
+      name="countryId"
+      placeholder="Selecciona un país"
+      v-model="form.countryId"
+      :options="countries.map(c => ({ label: c.name, value: c.id }))"
+    />
+  </FormRow>
+
+  <FormRow>
+    <FormKit
+      v-if="isMexico"
+      type="select"
+      label="Estado"
+      name="stateId"
+      placeholder="Selecciona un estado"
+      v-model="form.stateId"
+      :options="states.map(s => ({ label: s.name, value: s.id }))"
+    />
+    <FormKit
+      v-else
+      type="text"
+      label="Estado (manual)"
+      name="stateId"
+      v-model="form.stateId"
+      placeholder="Escribe el estado"
+    />
+  </FormRow>
+
+  <FormRow>
+    <FormKit
+      v-if="isMexico"
+      type="select"
+      label="Ciudad"
+      name="cityId"
+      placeholder="Selecciona una ciudad"
+      v-model="form.cityId"
+      :options="cities.map(ci => ({ label: ci.name, value: ci.id }))"
+    />
+    <FormKit
+      v-else
+      type="text"
+      label="Ciudad (manual)"
+      name="cityId"
+      v-model="form.cityId"
+      placeholder="Escribe la ciudad"
+    />
+  </FormRow>
+</InputGroup>
+
 
 
 
@@ -579,6 +782,19 @@ onMounted(async () => {
             :options="['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'NO ESPECIFICADO', 'OTRO']"
             validation="optional"
           />
+        </FormRow>
+
+        <FormRow>
+    <FormKit
+  type="select"
+  label="Interno/Externo"
+  name="intern"
+  placeholder="Selecciona una opción"
+  :options="['INTERNO', 'EXTERNO']"
+  v-model="form.intern"
+/>
+
+
         </FormRow>
       </InputGroup>
 

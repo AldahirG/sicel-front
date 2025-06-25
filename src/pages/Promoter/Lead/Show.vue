@@ -37,6 +37,7 @@ onMounted(async () => {
 
       careerInterest: info?.careerInterest,
       grade: data.data.grade?.name,
+      program: data.data.program,
       cycle: data.data.cycle?.cycle,
       formerSchool: info?.formerSchool,
       typeSchool: info?.typeSchool,
@@ -55,6 +56,7 @@ onMounted(async () => {
       dateContact: data.data.dateContact,
       scholarship: data.data.scholarship,
       semester: data.data.semester,
+      intern: data.data.intern,
       promoterName: `${promoter?.name || ''} ${promoter?.paternalSurname || ''} ${promoter?.maternalSurname || ''}`.trim(),
 
       comments: data.meta?.timeline,
@@ -116,6 +118,7 @@ onMounted(async () => {
         <BentoList field="Estado">{{ lead.state }}</BentoList>
         <BentoList field="Ciudad">{{ lead.city }}</BentoList>
         <BentoList field="Sexo">{{ lead.genre }}</BentoList>
+        <BentoList field="Interno/Externo">{{ lead.intern }}</BentoList>
         <BentoList field="Promotor">{{ lead.promoterName }}</BentoList>
       </ul>
     </BentoItem>
@@ -128,6 +131,7 @@ onMounted(async () => {
       <ul class="py-4 space-y-3">
         <BentoList field="Carrera de interés">{{ lead.careerInterest }}</BentoList>
         <BentoList field="Grado escolar">{{ lead.grade }}</BentoList>
+        <BentoList field="Programa">{{ lead.program }}</BentoList>
         <BentoList field="Ciclo escolar">{{ lead.cycle }}</BentoList>
         <BentoList field="Semestre">{{ lead.semester }}</BentoList>
         <BentoList field="Beca ofrecida">{{ lead.scholarship ? `${lead.scholarship}%` : 'N/A' }}</BentoList>

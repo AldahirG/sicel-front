@@ -15,9 +15,18 @@ export default {
     const currentPage = ref(1);
     const totalPages = ref(1);
 
+    // Ordenar alfabéticamente por key
+    const sortByName = (arr, key = 'name') => {
+      return [...arr].sort((a, b) => {
+        const nameA = a[key]?.toUpperCase?.() || '';
+        const nameB = b[key]?.toUpperCase?.() || '';
+        return nameA.localeCompare(nameB);
+      });
+    };
+
     const fetchChannels = async (page = 1) => {
       const { data } = await channel.getAll(page);
-      channels.value = data.data;
+      channels.value = sortByName(data.data);
       currentPage.value = data.meta.currentPage;
       totalPages.value = data.meta.totalPages;
     };

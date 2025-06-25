@@ -14,13 +14,17 @@ export const LeadResource = (form) => {
     phone,
     semester,
     scholarship,
+    program,
+    intern,
     ...rest
   } = form;
 
   return {
     ...rest,
-    ...(semester ? { semester } : {}),        // solo agrega si tiene valor
+    ...(semester ? { semester } : {}),
     ...(scholarship ? { scholarship } : {}),
+    ...(program ? { program } : {}),
+    ...(intern ? { intern } : {}),
     information: {
       name,
       genre,
