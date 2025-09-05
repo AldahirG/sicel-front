@@ -6,53 +6,61 @@ import Button from "../../../components/Button.vue";
 import TableRow from "../../../components/TableRow.vue";
 import TableHeaderCell from "../../../components/TableHeaderCell.vue";
 import TableDataCell from "../../../components/TableDataCell.vue";
+
 const Table = defineAsyncComponent(() =>
-    import('../../../components/Table.vue')
+  import('../../../components/Table.vue')
 );
 
 const store = useCampaignsStore();
 const campaigns = ref([]);
 
-onMounted(async () => {
-    await store.getAll();
-    campaigns.value = store.campaigns;
-});
+// Función reutilizable para ordenamiento alfabético
+const sortByName = (arr, key = 'name') => {
+  return [...arr].sort((a, b) => {
+    const nameA = a[key]?.toUpperCase?.() || '';
+    const nameB = b[key]?.toUpperCase?.() || '';
+    return nameA.localeCompare(nameB);
+  });
+};
 
+onMounted(async () => {
+  await store.getAll();
+  campaigns.value = sortByName(store.campaigns);
+});
 </script>
 
 <template>
-    <section class="flex items-end justify-end mb-6">
-        
-        <Button
-            name="createCampaign"
-            label="campaign_name"
-            width="w-48"
-        />
-    </section>
+  <section class="flex items-end justify-end mb-6">
+    <Button
+      name="createCampaign"
+      label="campaign_name"
+      width="w-48"
+    />
+  </section>
 
-    <section>
-        <Table>
-            <template #header>
-                <TableRow>
-                    <TableHeaderCell>Nombre</TableHeaderCell>
-                    <TableHeaderCell>Tipo de campaña</TableHeaderCell>
-                    <TableHeaderCell>Acciones</TableHeaderCell>
-                </TableRow>
-            </template>
-            <template #content>
-                <TableRow v-for="campaign in campaigns" :key="campaign.id">
-                    <TableDataCell>{{ campaign.name }}</TableDataCell>
-                    <TableDataCell>{{ campaign.type }}</TableDataCell>
-                    <TableDataCell>
-
-                        <router-link :to="{ path: '/admin/campaigns/' + campaign.id + '/edit/'}"
-                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200">
-                            <i class="bi bi-pencil-square"></i>
-                        </router-link>
-
-                    </TableDataCell>
-                </TableRow>
-            </template>
-        </Table>
-    </section>
+  <section>
+    <Table>
+      <template #header>
+        <TableRow>
+          <TableHeaderCell>Nombre</TableHeaderCell>
+          <TableHeaderCell>Tipo de campaña</TableHeaderCell>
+          <TableHeaderCell>Acciones</TableHeaderCell>
+        </TableRow>
+      </template>
+      <template #content>
+        <TableRow v-for="campaign in campaigns" :key="campaign.id">
+          <TableDataCell>{{ campaign.name }}</TableDataCell>
+          <TableDataCell>{{ campaign.type }}</TableDataCell>
+          <TableDataCell>
+            <router-link
+              :to="{ path: '/admin/campaigns/' + campaign.id + '/edit/' }"
+              class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </router-link>
+          </TableDataCell>
+        </TableRow>
+      </template>
+    </Table>
+  </section>
 </template>

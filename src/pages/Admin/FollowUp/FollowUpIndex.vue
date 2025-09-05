@@ -13,44 +13,50 @@ const Table = defineAsyncComponent(() =>
 const store = useFollowUpsStore();
 const followUps = ref([]);
 
-onMounted(async () => {
-    await store.getAll();
-    followUps.value = store.followUps;
-});
+const sortByName = (arr) => {
+  return [...arr].sort((a, b) => {
+    const nameA = a.name?.toUpperCase?.() || '';
+    const nameB = b.name?.toUpperCase?.() || '';
+    return nameA.localeCompare(nameB);
+  });
+};
 
+onMounted(async () => {
+  await store.getAll();
+  followUps.value = sortByName(store.followUps);
+});
 </script>
 
 <template>
-    <section class="flex items-end justify-end mb-6">
-        
-        <Button
-            name="createFollowUp"
-            label="seguimiento"
-            width="w-44"
-        />
-    </section>
+  <section class="flex items-end justify-end mb-6">
+    <Button
+      name="createFollowUp"
+      label="seguimiento"
+      width="w-44"
+    />
+  </section>
 
-    <section>
-        <Table>
-            <template #header>
-                <TableRow>
-                    <TableHeaderCell>Nombre del seguimiento</TableHeaderCell>
-                    <TableHeaderCell>Acciones</TableHeaderCell>
-                </TableRow>
-            </template>
-            <template #content>
-                <TableRow v-for="followUp in followUps" :key="followUp.id">
-                    <TableDataCell>{{ followUp.name }}</TableDataCell>
-                    <TableDataCell>
-
-                        <router-link :to="{ path: '/admin/follow-ups/' + followUp.id + '/edit/'}"
-                            class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200">
-                            <i class="bi bi-pencil-square"></i>
-                        </router-link>
-
-                    </TableDataCell>
-                </TableRow>
-            </template>
-        </Table>
-    </section>
+  <section>
+    <Table>
+      <template #header>
+        <TableRow>
+          <TableHeaderCell>Nombre del seguimiento</TableHeaderCell>
+          <TableHeaderCell>Acciones</TableHeaderCell>
+        </TableRow>
+      </template>
+      <template #content>
+        <TableRow v-for="followUp in followUps" :key="followUp.id">
+          <TableDataCell>{{ followUp.name }}</TableDataCell>
+          <TableDataCell>
+            <router-link
+              :to="{ path: '/admin/follow-ups/' + followUp.id + '/edit/' }"
+              class="py-2 px-4 text-black bg-amber-400 hover:bg-amber-500 rounded-md duration-200"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </router-link>
+          </TableDataCell>
+        </TableRow>
+      </template>
+    </Table>
+  </section>
 </template>
