@@ -47,5 +47,10 @@ export default {
 
   getOneByUser(id) {
     return api.get(`/enrollments/user/${id}`);
-  }
+  },
+
+  downloadExcelByList(listId) {
+  return api.get(`/enrollments/export-excel/list/${listId}`, { responseType: 'blob' });
+}
+
 };

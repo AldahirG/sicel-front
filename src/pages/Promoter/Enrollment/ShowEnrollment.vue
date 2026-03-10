@@ -3,22 +3,25 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import enrollmentService from '../../../services/enrollment.service';
 import leadService from '../../../services/lead.service';
+import { generateSolicitudPDF } from '../../../utils/generateSolicitudPdf';
 
 import BentoItem from '../../../components/BentoItem.vue';
 import BentoItemTitle from '../../../components/BentoItemTitle.vue';
 import BentoList from "../../../components/BentoList.vue";
-import SolicitudPDF from '../../../components/SolicitudPDF.vue';
-
 
 const route = useRoute();
 const { id } = route.params;
 
 const enrollment = ref({});
 const lead = ref({});
+const ready = ref(false); // ✅ Nuevo flag para saber si ya está listo
+
+const descargarPDF = () => {
+  generateSolicitudPDF(lead.value, enrollment.value);
+};
 
 onMounted(async () => {
   try {
-    // 📦 1. Obtener inscripción
     const { data } = await enrollmentService.getById(id);
     const enrollmentData = data.data;
     const leadId = enrollmentData.leadId;
@@ -39,7 +42,6 @@ onMounted(async () => {
       available: enrollmentData.available,
     };
 
-    // 📦 2. Obtener info extendida del lead
     const leadResponse = await leadService.getById(leadId);
     const leadData = leadResponse.data.data;
 
@@ -74,7 +76,6 @@ onMounted(async () => {
       nameReference: leadData.reference?.name,
       dataSource: leadData.reference?.dataSource,
 
-      // ✅ Aquí sí viene el promotor
       promoterName: leadData.promoter?.name || 'SIN INFORMACIÓN',
       promoterPaternalSurname: leadData.promoter?.paternalSurname || '',
 
@@ -83,11 +84,13 @@ onMounted(async () => {
       updateAt: leadData.updateAt,
     };
 
+    ready.value = true; // ✅ Marcamos como listo al final
   } catch (error) {
     console.error('❌ Error al cargar inscripción o lead:', error);
   }
 });
 </script>
+
 
 <template>
   <div class="mx-auto max-w-[1400px] my-3 px-5">
@@ -96,9 +99,13 @@ onMounted(async () => {
       Volver a la página anterior
     </router-link>
 
-    <div class="col-span-10 flex justify-end mt-4">
-  <SolicitudPDF :lead="lead" :enrollment="enrollment" />
+<div class="col-span-10 flex justify-end mt-4">
+<button @click="descargarPDF" class="btn btn-primary">
+  Descargar Solicitud en PDF
+</button>
+
 </div>
+
 
   </div>
 
@@ -168,8 +175,8 @@ onMounted(async () => {
     <BentoItem colSpan="col-span-10 lg:col-span-10">
       <BentoItemTitle><i class="bi bi-card-checklist mr-2"></i> Datos de Inscripción</BentoItemTitle>
       <ul class="py-4 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
-        <li><BentoList field="Folio">{{ enrollment.folio }}</BentoList></li>
-        <li><BentoList field="Matrícula">{{ enrollment.matricula }}</BentoList></li>
+        <li><BentoList field="Recibo">{{ enrollment.folio }}</BentoList></li>
+        <li><BentoList field="Matrícula Alumno">{{ enrollment.matricula }}</BentoList></li>
         <li><BentoList field="CURP">{{ enrollment.curp }}</BentoList></li>
         <li><BentoList field="Programa">{{ enrollment.career }}</BentoList></li>
         <li><BentoList field="Promoción">{{ enrollment.promotion }}</BentoList></li>

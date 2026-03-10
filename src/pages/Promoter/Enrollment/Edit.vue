@@ -3,9 +3,9 @@
     <div class="text-lg font-semibold mb-4">Editar Inscripción</div>
 
     <FormKit type="form" :actions="false" @submit="() => handleSubmit()">
-      <FormKit type="select" name="careersId" label="Carrera"
+      <FormKit type="select" name="careersId" label="Programa"
         :options="careers.map(c => ({ label: c.program, value: c.id }))"
-        placeholder="Selecciona una carrera" v-model="form.careersId" />
+        placeholder="Selecciona un programa" v-model="form.careersId" />
 
       <FormKit type="select" name="promotionId" label="Promoción"
         :options="promotions.map(p => ({ label: p.name, value: p.id }))"
@@ -19,7 +19,7 @@
         :options="lists.map(l => ({ label: l.noLista, value: l.id }))"
         placeholder="Selecciona una lista" v-model="form.listId" />
 
-      <FormKit type="text" name="enrollment_folio" label="Folio de inscripción"
+      <FormKit type="text" name="enrollment_folio" label="Recibo de inscripción"
         placeholder="Ej. FO-123" v-model="form.enrollment_folio" />
 
       <FormKit type="text" name="matricula" label="Matrícula"
@@ -117,7 +117,7 @@
         <p><strong>Programa:</strong> {{ currentPayment?.Enrollment?.Career?.program || '---' }}</p>
         <p><strong>Matrícula:</strong> <span class="font-mono">{{ currentPayment?.Enrollment?.matricula || '---' }}</span></p>
         <p><strong>CURP:</strong> <span class="font-mono">{{ currentPayment?.Enrollment?.curp || '---' }}</span></p>
-        <p><strong>Folio de inscripción:</strong> {{ currentPayment?.Enrollment?.enrollment_folio || '---' }}</p>
+        <p><strong>Recibo de inscripción:</strong> {{ currentPayment?.Enrollment?.enrollment_folio || '---' }}</p>
       </div>
 
       <div class="mt-4 pt-3 border-t">

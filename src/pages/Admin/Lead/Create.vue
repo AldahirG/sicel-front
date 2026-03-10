@@ -196,7 +196,8 @@ onMounted(async () => {
         name="scholarship"
         placeholder="Selecciona una beca"
         :options="[
-          '0', 
+          '0',
+          '5', 
           '10', 
           '15', 
           '20', 

@@ -5,7 +5,7 @@ export default {
     getAll(page = 1, filters = {}) {
         const params = {
             paginated: true,
-            'per-page': 60,
+            'per-page': 300,
             page,
             ...filters // Incluye los filtros aplicados
         };
@@ -44,14 +44,25 @@ export default {
         return api.post('/leads', data, { headers });
     },
 
-    update(id, data) {
-        const token = localStorage.getItem('token');
-        const headers = {
-            Authorization: `Bearer ${token}`
-        };
+update(id, data) {
+    const token = localStorage.getItem('token');
+    const headers = {
+        Authorization: `Bearer ${token}`
+    };
 
-        return api.patch(`/leads/${id}`, data, { headers });
-    },
+    // Limpiar valores vacíos en UUIDs
+    const cleanData = { ...data };
+    const uuidFields = ['cityId', 'gradeId', 'asetNameId', 'campaignId', 'userId', 'cycleId'];
+
+    uuidFields.forEach(key => {
+        if (cleanData[key] === '' || cleanData[key] === null) {
+            delete cleanData[key];
+        }
+    });
+
+    return api.patch(`/leads/${id}`, cleanData, { headers });
+},
+
 
     delete(id) {
         const token = localStorage.getItem('token');
@@ -118,7 +129,7 @@ export default {
         return api.get(`/leads/get-by-user/${id}`, { 
             params: {
                 paginated: true,
-                'per-page': 60,
+                'per-page': 300,
                 page,
             },
             headers

@@ -9,21 +9,24 @@ import asetName from "../../../services/asetName.service";
 import campaign from "../../../services/campaign.service";
 import career from "../../../services/career.service";
 import channel from "../../../services/channel.service";
-import city from "../../../services/city.service";
 import cycle from "../../../services/cycle.service";
 import followUp from "../../../services/followUp.service";
 import grade from "../../../services/grade.service";
 import list from "../../../services/list.service";
 import promotion from "../../../services/promotion.service";
+import LocationSelect from "../../../components/LocationSelect.vue";
+
 
 import FormContainer from "../../../components/FormContainer.vue";
 import FormRow from "../../../components/FormRow.vue";
 import InputGroup from "../../../components/InputGroup.vue";
 
+
 const toast = inject("toast");
 const route = useRoute();
 const router = useRouter();
 const { id } = route.params;
+
 
 const followUps = ref([]);
 const grades = ref([]);
@@ -51,37 +54,53 @@ const baseEnrollmentForm = {
 };
 
 const form = ref({
-    enrollmentStatus: "",
-    showAdditionalFields: false,
-    showNameReferenceField: false,
-    showNameReferenceSelect: false,
-    ...baseEnrollmentForm, // Inicializa con campos de inscripción vacíos
+  enrollmentStatus: "",
+  showAdditionalFields: false,
+  showNameReferenceField: false,
+  showNameReferenceSelect: false,
+  countryId: "",
+  stateId: "",
+  cityId: "",
+  location: {
+    countryId: "",
+    stateId: "",
+    cityId: "",
+  },
+  ...baseEnrollmentForm, // otros campos
 });
 
+
 const personalUninterList = [
-    "ADRIAN MOLINA", "ALEJANDRA RIVAS", "ALDAHIR GOMEZ", "ANALIT ROMAN ARCE", "ANGELICA NIETO",
-    "AXEL ESPINOSA", "BETSABE FLORES", "BRYAN MURGA", "CESAR SANTA OLALLA", "CLAUDIA GALAN",
-    "EMMA ARRIAGA", "ISIS CORTES", "JAVIER DE JESUS", "JAVIER ESPINOSA", "JESUS GUZMAN",
-    "JESUS TRILLO", "JORGE NARVAEZ", "JOSE JAVIER DEL CASTILLO", "KEREN GOMEZ", "MARIAN SALGADO",
-    "MARCO SALGADO", "MELYSSA MONROY", "RAUL CASTILLEJA", "THALIA SANCHEZ", "XIMENA MARTINEZ",
-    "YOALI APARICIO", "YANIN VAZQUEZ", "NINGUNO DE LOS ANTERIORES",
-];
+  "ADRIAN MOLINA", "ALEJANDRA RIVAS", "ALDAHIR GOMEZ", "ANALIT ROMAN ARCE", "ANGELICA NIETO",
+  "AXEL ESPINOSA", "BETSABE FLORES", "BRYAN MURGA", "CESAR SANTA OLALLA", "CLAUDIA GALAN",
+  "EMMA ARRIAGA", "ISIS CORTES", "JAVIER DE JESUS", "JAVIER ESPINOSA", "JESUS GUZMAN",
+  "JESUS TRILLO", "JORGE NARVAEZ", "JOSE JAVIER DEL CASTILLO", "KEREN GOMEZ", "MARIAN SALGADO",
+  "MARCO SALGADO", "MELYSSA MONROY", "RAUL CASTILLEJA", "THALIA SANCHEZ", "XIMENA MARTINEZ",
+  "YOALI APARICIO", "YANIN VAZQUEZ"
+].sort((a, b) => a.localeCompare(b)).concat("NINGUNO DE LOS ANTERIORES");
+
 
 const isFormDisabled = computed(() => {
     return enrollmentData.value !== null || isLoadingEnrollment.value;
 });
 
 const handleSubmit = async (form) => {
-    try {
-        const mapper = LeadResource(form);
-        const { data } = await lead.update(id, mapper);
+  try {
+    form.countryId = form.location?.countryId || "";
+    form.stateId = form.location?.stateId || "";
+    form.cityId = form.location?.cityId || "";
 
-        toast.open({ message: data.http.message, type: "success" });
-        router.push({ name: "promoter/leads" });
-    } catch (error) {
-        toast.open({ message: error.response.data.message, type: "error" });
-    }
+    const mapper = LeadResource(form);
+
+    const { data } = await lead.update(id, mapper);
+
+    toast.open({ message: data.http.message, type: "success" });
+    router.push({ name: "promoter/leads" });
+  } catch (error) {
+    toast.open({ message: error.response?.data?.message || "Error inesperado", type: "error" });
+  }
 };
+
 
 const fetchEnrollmentData = async () => {
     try {
@@ -136,10 +155,18 @@ const normalizeAlpha = (value) =>
     .trim()
     .toUpperCase() || "";
 
+    const normalizeBeta = (value) =>
+  value
+    ?.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+    .replace(/[^A-Z0-9_]/gi, "") // Permitir solo letras (mayúsculas), números y guiones bajos
+    .toUpperCase() || "";
+
+
 watch(form, (val) => {
   form.value.name = normalizeAlpha(val.name);
   form.value.careerInterest = normalizeAlpha(val.careerInterest);
-  form.value.formerSchool = normalizeAlpha(val.formerSchool);
+  form.value.formerSchool = normalizeBeta(val.formerSchool);
   form.value.comments = normalizeAlpha(val.comments);
   form.value.dataSource = normalizeAlpha(val.dataSource);
 
@@ -164,16 +191,20 @@ const handleSaveAsEnrollment = async () => {
             LeadResource(form.value)
         );
 
-        const enrollmentDataToSend = {
-            leadId: id,
-            careersId: form.value.programa,
-            channelId: form.value.canalVenta,
-            listId: form.value.numeroLista,
-            promotionId: form.value.estrategia,
-            enrollment_folio: form.value.matricula,
-            scholarship: form.value.beca,
-            curp: form.value.curp,
-        };
+       const enrollmentDataToSend = {
+        leadId: id,
+        careersId: form.value.programa,
+        channelId: form.value.canalVenta,
+        listId: form.value.numeroLista,
+        promotionId: form.value.estrategia,
+        enrollment_folio: form.value.folio, // ✅ aquí debe ir el folio
+        matricula: form.value.matricula,     // ✅ aquí ahora sí se manda la matrícula
+        scholarship: form.value.beca,
+        curp: form.value.curp,
+      };
+      console.log("Payload a enviar:", enrollmentDataToSend);
+
+
 
         const { data: enrollmentCreated } = await enrollment.create(enrollmentDataToSend);
 
@@ -283,34 +314,32 @@ watch(
         }
     }
 );
-
-// Función para cargar todos los datos necesarios en onMounted y en el watcher
 const loadLeadAndEnrollmentData = async () => {
   try {
-    if (followUps.value.length === 0) followUps.value = (await followUp.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
-    if (grades.value.length === 0) grades.value = (await grade.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
-    if (asetNames.value.length === 0) asetNames.value = (await asetName.getAll()).data.data.sort((a, b) => {
+    followUps.value = (await followUp.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    grades.value = (await grade.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    asetNames.value = (await asetName.getAll()).data.data.sort((a, b) => {
       const aFull = `${a.contactType.name} - ${a.name}`;
       const bFull = `${b.contactType.name} - ${b.name}`;
       return aFull.localeCompare(bFull);
     });
-    if (campaigns.value.length === 0) campaigns.value = (await campaign.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
-    if (cities.value.length === 0) cities.value = (await city.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
-    if (cycles.value.length === 0) cycles.value = (await cycle.getAll()).data.data.sort((a, b) => a.cycle.localeCompare(b.cycle));
-    if (lists.value.length === 0) lists.value = (await list.getAll()).data.data.sort((a, b) => a.noLista.localeCompare(b.noLista));
-    if (channels.value.length === 0) channels.value = (await channel.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
-    if (careers.value.length === 0) careers.value = (await career.getAll()).data.data.sort((a, b) => a.program.localeCompare(b.program));
-    if (promotions.value.length === 0) promotions.value = (await promotion.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    campaigns.value = (await campaign.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    cycles.value = (await cycle.getAll()).data.data.sort((a, b) => a.cycle.localeCompare(b.cycle));
+    lists.value = (await list.getAll()).data.data.sort((a, b) => a.noLista.localeCompare(b.noLista));
+    channels.value = (await channel.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
+    careers.value = (await career.getAll()).data.data.sort((a, b) => a.program.localeCompare(b.program));
+    promotions.value = (await promotion.getAll()).data.data.sort((a, b) => a.name.localeCompare(b.name));
 
     const { data } = await lead.getById(route.params.id);
     const leadInfo = data.data;
+
     const followUpName = leadInfo?.information?.followUp?.name;
 
     form.value.name = leadInfo.information?.name;
     form.value.genre = leadInfo.information?.genre;
     form.value.enrollmentStatus = leadInfo.information?.enrollmentStatus;
     form.value.followUpId = leadInfo?.information?.followUp?.id;
-    form.value.phone = leadInfo?.phones;
+    // form.value.phone = leadInfo?.phones;
     form.value.email = leadInfo?.emails;
     form.value.careerInterest = leadInfo.information?.careerInterest;
     form.value.gradeId = leadInfo.grade?.id;
@@ -328,6 +357,10 @@ const loadLeadAndEnrollmentData = async () => {
     form.value.showNameReferenceField = ["ALUMNO", "FAMILIAR_ALUMNO"].includes(leadInfo.reference?.type);
     form.value.showNameReferenceSelect = leadInfo.reference?.type === "PERSONAL_UNINTER";
     form.value.showAdditionalFields = followUpName === "INSC-INSCRIPCIÓN";
+    form.value.countryId = leadInfo.address?.country?.id || "";
+    form.value.stateId = leadInfo.address?.state?.id || "";
+    form.value.cityId = leadInfo.address?.city?.id || "";
+
 
     // 🔥 Asegurar que los datos de inscripción viejos no contaminen
     enrollmentData.value = null;
@@ -354,6 +387,7 @@ const loadLeadAndEnrollmentData = async () => {
     enrollmentData.value = null;
   }
 };
+
 
 
 onMounted(async () => {
@@ -522,13 +556,9 @@ onMounted(async () => {
         :options="campaigns.map((c) => ({ label: c.name, value: c.id }))"
       />
 
-      <FormKit
-        type="select"
-        label="Ciudad"
-        name="cityId"
-        placeholder="Selecciona una ciudad"
-        :options="cities.map((c) => ({ label: c.name, value: c.id }))"
-      />
+      <LocationSelect v-model="form.location" />
+
+
 
       <InputGroup>
         <FormRow>
@@ -543,7 +573,7 @@ onMounted(async () => {
         <FormRow>
           <FormKit
             type="select"
-            label="Semestre de ingreso"
+            label="Semestre/Cuatrimestre/Año de ingreso"
             name="semester"
             placeholder="Selecciona un semestre"
             :options="['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'NO ESPECIFICADO', 'OTRO']"
@@ -623,11 +653,11 @@ onMounted(async () => {
       <p class="bg-blue-100 p-2 rounded">{{ enrollmentData.List?.noLista || 'N/A' }}</p>
     </div>
     <div>
-      <label class="block text-blue-700 text-sm font-bold mb-1">Matrícula:</label>
+      <label class="block text-blue-700 text-sm font-bold mb-1">Matrícula Alumno:</label>
       <p class="bg-blue-100 p-2 rounded">{{ enrollmentData.matricula || 'N/A' }}</p>
     </div>
     <div>
-      <label class="block text-blue-700 text-sm font-bold mb-1">Folio:</label>
+      <label class="block text-blue-700 text-sm font-bold mb-1">Recibo:</label>
       <p class="bg-blue-100 p-2 rounded">{{ enrollmentData.enrollment_folio || 'N/A' }}</p>
     </div>
     <div>
@@ -647,8 +677,6 @@ onMounted(async () => {
       name="programa"
       placeholder="Selecciona un programa"
       :options="careers.map((c) => ({ label: c.program, value: c.id }))"
-      validation="required"
-      :validation-messages="{ required: 'Debes seleccionar un programa.' }"
       v-model="form.programa"
       :disabled="isFormDisabled"
     />
@@ -658,8 +686,7 @@ onMounted(async () => {
       name="estrategia"
       placeholder="Selecciona una promoción"
       :options="promotions.map((p) => ({ label: p.name, value: p.id }))"
-      validation="required"
-      :validation-messages="{ required: 'Debes seleccionar una promoción.' }"
+      
       v-model="form.estrategia"
       :disabled="isFormDisabled"
     />
@@ -669,8 +696,7 @@ onMounted(async () => {
       name="canalVenta"
       placeholder="Selecciona un canal"
       :options="channels.map((ch) => ({ label: ch.name, value: ch.id }))"
-      validation="required"
-      :validation-messages="{ required: 'Debes seleccionar un canal de venta.' }"
+     
       v-model="form.canalVenta"
       :disabled="isFormDisabled"
     />
@@ -680,8 +706,7 @@ onMounted(async () => {
       name="numeroLista"
       placeholder="Selecciona una lista"
       :options="lists.map((l) => ({ label: l.noLista, value: l.id }))"
-      validation="required"
-      :validation-messages="{ required: 'Debes seleccionar una lista de comisión.' }"
+   
       v-model="form.numeroLista"
       :disabled="isFormDisabled"
     />
@@ -690,21 +715,16 @@ onMounted(async () => {
       name="matricula"
       label="Matrícula"
       placeholder="Número de matrícula"
-      validation="required|length:6"
-      :validation-messages="{
-        required: 'La matrícula es obligatoria.',
-        length: 'La matrícula debe tener 6 caracteres.',
-      }"
+   
       v-model="form.matricula"
       :disabled="isFormDisabled"
     />
     <FormKit
       type="text"
       name="folio"
-      label="Folio"
-      placeholder="Número de folio"
-      validation="required"
-      :validation-messages="{ required: 'El folio es obligatorio.' }"
+      label="Recibo"
+      placeholder="Número de Recibo"
+  
       v-model="form.folio"
       :disabled="isFormDisabled"
     />
@@ -717,8 +737,7 @@ onMounted(async () => {
         '0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60',
         'APOYO TRABAJADOR', 'ORFANDAD', 'PATRONATO', 'PRACTICANTE RH',
       ]"
-      validation="required"
-      :validation-messages="{ required: 'Debes seleccionar una beca.' }"
+    
       v-model="form.beca"
       :disabled="isFormDisabled"
     />
@@ -727,11 +746,8 @@ onMounted(async () => {
       label="CURP"
       name="curp"
       placeholder="Clave Única de Registro de Población (CURP)"
-      validation="required|matches:/^[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]{2}$/"
-      :validation-messages="{
-        // required: 'La CURP es obligatoria.',
-        // matches: 'Formato de CURP inválido.',
-      }"
+      
+    
       v-model="form.curp"
       :disabled="isFormDisabled"
     />

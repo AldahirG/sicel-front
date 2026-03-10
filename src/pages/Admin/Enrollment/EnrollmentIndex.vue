@@ -111,23 +111,60 @@ const goToShow = (id) => {
   router.push({ name: 'admin/showEnrollment', params: { id } });
 };
 
+const showDownloadModal = ref(false);
+const selectedListId = ref('');
+
+const handleDownloadExcel = async () => {
+  try {
+    const response = await enrollmentService.downloadExcelByList(selectedListId.value);
+    const blob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'lista-inscripciones.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showDownloadModal.value = false;
+  } catch (error) {
+    console.error("Error al descargar el archivo:", error);
+  }
+};
+
+
 onMounted(() => {
   fetchEnrollments();
 });
 </script>
 
 <template>
-  <section class="flex items-center justify-between mb-6 gap-4">
-    <div class="flex gap-4">
-      <Button name="admin/enrollments/promotions" actionLabel="Promociones de" label="inscripción" icon="bi bi-badge-ad-fill" borderColor="border-gray-600" background="bg-gray-600" height="h-12" width="w-56" />
-      <Button name="admin/enrollments/lists" actionLabel="Lista de" label="comisiones" icon="bi bi-journals" borderColor="border-gray-600" background="bg-gray-600" height="h-12" width="w-[178px]" />
-      <Button name="admin/enrollments/channels" actionLabel="Canal de" label="venta" icon="bi bi-clipboard2-data-fill" borderColor="border-gray-600" background="bg-gray-600" height="h-12" />
-    </div>
-    <button @click="openFilterModal" class="btn btn-primary">
+<section class="flex flex-wrap items-center justify-between mb-6 gap-4">
+  <!-- Grupo de botones de navegación -->
+  <div class="flex flex-wrap gap-4">
+    <Button name="admin/enrollments/promotions" actionLabel="Promociones de" label="inscripción" icon="bi bi-badge-ad-fill" borderColor="border-gray-600" background="bg-gray-600" height="h-12" width="w-56" />
+    <Button name="admin/enrollments/lists" actionLabel="Lista de" label="comisiones" icon="bi bi-journals" borderColor="border-gray-600" background="bg-gray-600" height="h-12" width="w-[178px]" />
+    <Button name="admin/enrollments/channels" actionLabel="Canal de" label="venta" icon="bi bi-clipboard2-data-fill" borderColor="border-gray-600" background="bg-gray-600" height="h-12" />
+  </div>
+
+  <!-- Grupo de acciones (filtro + descarga) -->
+  <div class="flex gap-3">
+    <button @click="openFilterModal" class="btn btn-primary h-12 flex items-center px-4">
       <i class="bi bi-funnel-fill mr-2"></i>
       Filtrar
     </button>
-  </section>
+    <Button
+      label="Descargar Excel por Lista"
+      icon="bi bi-download"
+      background="bg-green-600"
+      borderColor="border-green-600"
+      height="h-12"
+      @click="showDownloadModal = true"
+    />
+  </div>
+</section>
+
 
   <Modal v-if="showFilterModal" @close="showFilterModal = false">
     <template #header>
@@ -172,6 +209,35 @@ onMounted(() => {
       </div>
     </template>
   </Modal>
+
+  <Modal v-if="showDownloadModal" @close="showDownloadModal = false">
+  <template #header>
+    <h3 class="text-lg font-semibold">Seleccionar Lista a Descargar</h3>
+  </template>
+  <template #body>
+    <div>
+      <label class="block text-sm mb-1">Lista</label>
+      <select v-model="selectedListId" class="input w-full">
+        <option disabled value="">Seleccione una lista</option>
+        <option v-for="list in filterOptions.List" :key="list.id" :value="list.id">
+          {{ list.noLista }}
+        </option>
+      </select>
+    </div>
+  </template>
+  <template #footer>
+    <div class="flex justify-end gap-4">
+      <button @click="showDownloadModal = false" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
+        <i class="bi bi-x-circle-fill mr-1"></i>
+        Cancelar
+      </button>
+      <button @click="handleDownloadExcel" :disabled="!selectedListId" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+        <i class="bi bi-download mr-1"></i>
+        Descargar
+      </button>
+    </div>
+  </template>
+</Modal>
 
   <section>
     <Table>

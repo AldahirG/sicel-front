@@ -7,154 +7,130 @@ const props = defineProps({
   enrollment: Object
 });
 
-const generateSolicitudPDF = async () => {
+const generate = async () => {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const pageWidth = 609.45;
-  const pageHeight = 793.7;
+  const page = pdfDoc.addPage([612, 792]); // Carta: 8.5 x 11 pulgadas
+  const { width, height } = page.getSize();
 
-  const loadImageFromPublic = async (path) => {
-    const url = `${window.location.origin}/${path}`;
-    const res = await fetch(url);
-    return await res.arrayBuffer();
-  };
-
-  const frontBytes = await loadImageFromPublic('formulario_frente.jpg');
-  const frontImg = await pdfDoc.embedJpg(frontBytes);
-  const page1 = pdfDoc.addPage([pageWidth, pageHeight]);
-  page1.drawImage(frontImg, { x: 0, y: 0, width: pageWidth, height: pageHeight });
-
-  const backBytes = await loadImageFromPublic('formulario_reverso.jpg');
-  const backImg = await pdfDoc.embedJpg(backBytes);
-  const page2 = pdfDoc.addPage([pageWidth, pageHeight]);
-  page2.drawImage(backImg, { x: 0, y: 0, width: pageWidth, height: pageHeight });
-
-  const logoBytes = await loadImageFromPublic('396910a7-b9b9-48eb-991d-acbd92875c25.png');
-  const logoImg = await pdfDoc.embedPng(logoBytes);
-  page1.drawImage(logoImg, { x: 30, y: 730, width: 50, height: 50 });
-
-  page1.drawText('Universidad Internacional', {
-    x: 90,
-    y: 755,
-    size: 12,
-    font,
-    color: rgb(0, 0, 0),
-  });
-  page1.drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', {
-    x: 90,
-    y: 740,
-    size: 7,
-    font,
-    color: rgb(0, 0, 0),
-  });
-
-  const privacyText = [
-    'La Universidad Internacional, con domicilio en San Jerónimo 204 de la Colonia San Jerónimo, de esta misma ciudad de Cuernavaca,',
-    'Morelos, México C.P. 62179, es responsable de recabar sus datos personales, del uso que se le dé a los mismos y de su protección.',
-    'Su información personal será utilizada indistintamente, en el caso de que usted sea aspirante, alumno, egresado, proveedor, colaborador o',
-    'solicitante de empleo, para efectos académicos o administrativos, proveer de servicios, productos e información, participar sobre',
-    'cambios en los mismos, evaluar la calidad de servicios que le brindamos, generar reportes con fines estadísticos que ayuden a la',
-    'planeación estratégica y operativa de la institución, así como a la acreditación de sus programas académicos.',
-    'Si usted desea conocer el aviso de privacidad, por favor le pedimos lo revise en:',
-    'www.uninter.edu.mx/universidad/Política-Privacidad'
-  ];
-
-  privacyText.forEach((line, index) => {
-    page1.drawText(line, {
-      x: 30,
-      y: 710 - index * 11,
-      size: 6.5,
-      font,
-      color: rgb(0, 0, 0),
-    });
-  });
-
-  // Pie de página reverso con fondo azul y nueva información
-  page2.drawRectangle({
-    x: 0,
-    y: 0,
-    width: pageWidth,
-    height: 60,
-    color: rgb(0.07, 0.2, 0.4), // Azul oscuro
-  });
-
-  page2.drawImage(logoImg, { x: 30, y: 10, width: 40, height: 40 });
-  page2.drawText('Universidad Internacional', {
-    x: 80,
-    y: 38,
-    size: 10,
-    font,
-    color: rgb(1, 1, 1),
-  });
-  page2.drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', {
-    x: 80,
-    y: 25,
-    size: 6,
-    font,
-    color: rgb(1, 1, 1),
-  });
-
-  const contactText = [
-    'COMUNIDAD UNINTER',
-    'admisionese@uninter.edu.mx',
-    'www.uninter.edu.mx',
-    'Tel: 777 357 9000 / 777 332 8320 / 777 357 9001'
-  ];
-  contactText.forEach((line, i) => {
-    page2.drawText(line, {
-      x: 370,
-      y: 38 - i * 10,
-      size: i === 0 ? 8.5 : 6,
-      font,
-      color: rgb(1, 1, 1),
-    });
-  });
-
-  const drawText = (page, text, x, y, size = 10) => {
+  const drawText = (text, x, y, size = 10, bold = false) => {
     page.drawText(text || '', {
       x,
       y,
       size,
-      font,
+      font: bold ? boldFont : font,
       color: rgb(0, 0, 0),
     });
   };
 
-  // === Página 1: Frente ===
-  drawText(page1, props.enrollment?.career, 120, 715);
-  drawText(page1, props.lead?.semester, 440, 715);
-  drawText(page1, new Date(props.enrollment?.date).toLocaleDateString(), 440, 700);
+  const drawLine = (x1, y1, x2, y2) => {
+    page.drawLine({
+      start: { x: x1, y: y1 },
+      end: { x: x2, y: y2 },
+      thickness: 0.5,
+      color: rgb(0.6, 0.6, 0.6)
+    });
+  };
 
-  drawText(page1, props.lead?.name, 120, 665);
-  drawText(page1, props.lead?.phones?.join(', '), 120, 650);
-  drawText(page1, props.lead?.emails?.join(', '), 120, 635);
+  const drawCheckbox = (x, y, checked = false) => {
+    page.drawRectangle({ x, y, width: 10, height: 10, borderWidth: 0.5, borderColor: rgb(0, 0, 0) });
+    if (checked) {
+      page.drawLine({ start: { x: x + 2, y: y + 5 }, end: { x: x + 4, y: y + 2 }, thickness: 1 });
+      page.drawLine({ start: { x: x + 4, y: y + 2 }, end: { x: x + 8, y: y + 8 }, thickness: 1 });
+    }
+  };
 
-  drawText(page1, props.lead?.formerSchool, 120, 605);
-  drawText(page1, props.lead?.city, 120, 590);
-  drawText(page1, props.lead?.state, 250, 590);
-  drawText(page1, props.lead?.cycle, 440, 590);
+  // Header azul con logo
+  page.drawRectangle({ x: 0, y: height - 60, width, height: 60, color: rgb(0.07, 0.2, 0.4) });
 
-  drawText(page1, props.lead?.promoterName + ' ' + props.lead?.promoterPaternalSurname, 120, 500);
+  const logoUrl = `${window.location.origin}/uninterlogonofondo.png`;
+  const logoBytes = await fetch(logoUrl).then(res => res.arrayBuffer());
+  const logoImg = await pdfDoc.embedPng(logoBytes);
+  page.drawImage(logoImg, { x: 30, y: height - 50, width: 50, height: 50 });
 
-  // === Página 2: Reverso ===
-  drawText(page2, props.lead?.contactType, 300, 700);
-  drawText(page2, props.lead?.asetName, 300, 685);
-  drawText(page2, props.lead?.campaign, 300, 670);
+  drawText('Universidad Internacional', 90, height - 30, 12, true);
+  drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', 90, height - 45, 7);
+
+  // Datos personales
+  drawText('Nombre del prospecto:', 40, 710, 9, true);
+  drawText(props.lead.name, 180, 710);
+
+  drawText('Teléfono:', 40, 690, 9, true);
+  drawText(props.lead.phones?.join(', '), 180, 690);
+
+  drawText('Correo electrónico:', 40, 670, 9, true);
+  drawText(props.lead.emails?.join(', '), 180, 670);
+
+  drawText('Ciudad / Estado / País:', 40, 650, 9, true);
+  drawText(`${props.lead.city}, ${props.lead.state}, ${props.lead.country}`, 180, 650);
+
+  drawText('Promotor:', 40, 630, 9, true);
+  drawText(`${props.lead.promoterName} ${props.lead.promoterPaternalSurname}`, 180, 630);
+
+  drawLine(40, 620, width - 40, 620); // Línea divisoria
+
+  // Datos académicos
+  drawText('Carrera:', 40, 600, 9, true);
+  drawText(props.enrollment.career, 180, 600);
+
+  drawText('Grado:', 40, 580, 9, true);
+  drawText(props.lead.grade, 180, 580);
+
+  drawText('Semestre:', 40, 560, 9, true);
+  drawText(props.lead.semester, 180, 560);
+
+  drawText('Ciclo escolar:', 40, 540, 9, true);
+  drawText(props.lead.cycle, 180, 540);
+
+  drawText('Fecha de inscripción:', 40, 520, 9, true);
+  drawText(new Date(props.enrollment.date).toLocaleDateString(), 180, 520);
+
+  drawLine(40, 510, width - 40, 510);
+
+  // Opciones de ingreso (ejemplo con checkboxes)
+  drawText('Opciones de ingreso:', 40, 490, 9, true);
+  drawCheckbox(60, 470, props.lead.typeSchool === 'PUBLICA');
+  drawText('Pública', 75, 472);
+  drawCheckbox(150, 470, props.lead.typeSchool === 'PRIVADA');
+  drawText('Privada', 165, 472);
+
+  drawLine(40, 460, width - 40, 460);
+
+  // Reverso (segunda página)
+  const page2 = pdfDoc.addPage([612, 792]);
+  drawText('Campaña:', 40, 710, 9, true);
+  drawText(props.lead.campaign, 180, 710);
+  drawText('Asset name:', 40, 690, 9, true);
+  drawText(props.lead.asetName, 180, 690);
+  drawText('Tipo de contacto:', 40, 670, 9, true);
+  drawText(props.lead.contactType, 180, 670);
+
+  drawText('Referido:', 40, 640, 9, true);
+  drawText(props.lead.nameReference || '', 180, 640);
+  drawText('Tipo de referido:', 40, 620, 9, true);
+  drawText(props.lead.type || '', 180, 620);
+
+  // Footer azul
+  page2.drawRectangle({ x: 0, y: 0, width, height: 60, color: rgb(0.07, 0.2, 0.4) });
+  page2.drawImage(logoImg, { x: 30, y: 10, width: 40, height: 40 });
+  drawText('Universidad Internacional', 80, 38, 10, true);
+  drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', 80, 25, 6);
+  drawText('COMUNIDAD UNINTER', 380, 38, 8.5, true);
+  drawText('admisionese@uninter.edu.mx', 380, 28, 6);
+  drawText('www.uninter.edu.mx', 380, 18, 6);
+  drawText('Tel: 777 357 9000 / 777 332 8320 / 777 357 9001', 380, 8, 6);
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  saveAs(blob, `solicitud-${props.lead?.name || 'lead'}.pdf`);
+  saveAs(blob, `solicitud-${props.lead.name || 'prospecto'}.pdf`);
 };
+
+defineExpose({ generate });
 </script>
 
 <template>
-  <div>
-    <button
-      class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      @click="generateSolicitudPDF"
-    >
-      Descargar Solicitud en PDF
-    </button>
-  </div>
+  <!-- Oculto intencionalmente -->
+  <div class="hidden"></div>
 </template>

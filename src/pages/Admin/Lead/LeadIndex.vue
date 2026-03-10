@@ -37,7 +37,7 @@ const options = ref({});
 
 const fetchLeads = async () => {
   try {
-    const { data } = await lead.getAll(currentPage.value, { paginated: true, 'per-page': 80 });
+    const { data } = await lead.getAll(currentPage.value, { paginated: true, 'per-page': 500 });
     leadsOriginal.value = [...data.data];
     leads.value = [...data.data];
     totalPages.value = data.meta.totalPages;
