@@ -42,16 +42,13 @@ const generate = async () => {
     }
   };
 
-  // Header azul con logo
+  // Header
   page.drawRectangle({ x: 0, y: height - 60, width, height: 60, color: rgb(0.07, 0.2, 0.4) });
+  page.drawRectangle({ x: 30, y: height - 50, width: 40, height: 40, color: rgb(0.13, 0.77, 0.37), borderWidth: 0 });
+  drawText('SICEL', 32, height - 32, 14, true);
 
-  const logoUrl = `${window.location.origin}/uninterlogonofondo.png`;
-  const logoBytes = await fetch(logoUrl).then(res => res.arrayBuffer());
-  const logoImg = await pdfDoc.embedPng(logoBytes);
-  page.drawImage(logoImg, { x: 30, y: height - 50, width: 50, height: 50 });
-
-  drawText('Universidad Internacional', 90, height - 30, 12, true);
-  drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', 90, height - 45, 7);
+  drawText('Sistema de Gestión de Prospectos', 90, height - 30, 12, true);
+  drawText('Control · Seguimiento · Eficiencia', 90, height - 45, 7);
 
   // Datos personales
   drawText('Nombre del prospecto:', 40, 710, 9, true);
@@ -112,15 +109,13 @@ const generate = async () => {
   drawText('Tipo de referido:', 40, 620, 9, true);
   drawText(props.lead.type || '', 180, 620);
 
-  // Footer azul
+  // Footer
   page2.drawRectangle({ x: 0, y: 0, width, height: 60, color: rgb(0.07, 0.2, 0.4) });
-  page2.drawImage(logoImg, { x: 30, y: 10, width: 40, height: 40 });
-  drawText('Universidad Internacional', 80, 38, 10, true);
-  drawText('SECUNDARIA. BACHILLERATO. LICENCIATURA. INGENIERÍA. POSGRADO', 80, 25, 6);
-  drawText('COMUNIDAD UNINTER', 380, 38, 8.5, true);
-  drawText('admisionese@uninter.edu.mx', 380, 28, 6);
-  drawText('www.uninter.edu.mx', 380, 18, 6);
-  drawText('Tel: 777 357 9000 / 777 332 8320 / 777 357 9001', 380, 8, 6);
+  page2.drawRectangle({ x: 30, y: 10, width: 40, height: 40, color: rgb(0.13, 0.77, 0.37), borderWidth: 0 });
+  drawText('SICEL', 32, 26, 14, true);
+  drawText('Sistema de Gestión de Prospectos', 80, 38, 10, true);
+  drawText('Control · Seguimiento · Eficiencia', 80, 25, 6);
+  drawText('Demo — datos simulados', 380, 28, 7);
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
