@@ -123,8 +123,8 @@
         <div class="rounded-md border border-gray-300 p-4 bg-white shadow space-y-3 text-sm text-gray-800">
           <div class="flex justify-between text-xs border-b pb-2 mb-2">
             <div>
-              <p class="font-bold text-gray-700">Universidad Internacional</p>
-              <p class="text-gray-500">Instituto Universitario Internacional, S.C.</p>
+              <p class="font-bold text-gray-700">SICEL CRM</p>
+              <p class="text-gray-500">Sistema de Gestión de Prospectos</p>
             </div>
             <div class="text-right">
               <p><strong>Recibo:</strong> {{ currentPayment?.documentNumber }}</p>

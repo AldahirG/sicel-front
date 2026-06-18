@@ -72,20 +72,19 @@ watchEffect(() => {
   <main class="h-dvh w-full bg-gray-200 dark:bg-woodsmoke-950 transition-colors duration-300 ease-out">
     <section class="container mx-auto h-full w-full lg:max-w-6xl py-12">
       <div class="flex h-full w-full bg-white dark:bg-woodsmoke-900 transition-colors duration-300 ease-out rounded-xl shadow-lg overflow-hidden">
-        <!-- Imagen representativa -->
-        <div class="hidden lg:block h-full w-1/2">
-          <figure class="h-full w-full">
-            <img src="/public/uninterlogo.png" alt="logo-uninter" class="w-full h-full object-cover" />
-          </figure>
+        <!-- Panel izquierdo decorativo -->
+        <div class="hidden lg:flex h-full w-1/2 flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-600 gap-4">
+          <div class="text-white text-6xl font-black tracking-tight select-none">SICEL</div>
+          <div class="text-slate-300 text-sm text-center max-w-xs">Sistema Integral de Control y Eficiencia en Leads</div>
         </div>
         <!-- Formulario -->
         <div class="h-full w-full lg:w-1/2">
           <div class="flex flex-col items-center justify-center h-full w-full py-8">
             <div class="my-10">
               <div class="flex justify-center w-full pb-6">
-                <figure class="block lg:hidden w-28 h-28">
-                  <img src="/public/Uninter - Logo (Responsive).png" alt="logo-uninter" />
-                </figure>
+                <div class="block lg:hidden w-28 h-28 flex items-center justify-center rounded-full bg-slate-800">
+                  <span class="text-white text-3xl font-black">S</span>
+                </div>
               </div>
               <h2 class="text-black dark:text-white text-center text-lg md:text-2xl font-bold uppercase transition-colors duration-300 ease-out">
                 Inicio de sesión
@@ -95,38 +94,49 @@ watchEffect(() => {
               </h1>
             </div>
 
+            <!-- Demo credentials hint -->
+            <div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 text-center">
+              <p class="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide mb-1">Acceso Demo</p>
+              <p class="text-sm text-blue-800 dark:text-blue-200">
+                <span class="font-mono">demo@sicel.mx</span>
+              </p>
+              <p class="text-sm text-blue-800 dark:text-blue-200">
+                Contraseña: <span class="font-mono font-bold">demo1234</span>
+              </p>
+            </div>
+
             <div class="w-full max-w-xs md:max-w-xl lg:max-w-md">
 <form @submit.prevent="handleLogin">
   <div>
-    <InputLabel for="email" value="Correo Electrónico" />
+    <InputLabel for="email" value="Correo Electrónico — demo@sicel.mx" />
     <div class="relative">
       <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
         📧
       </span>
-      <TextInput 
-        id="email" 
-        v-model="form.email" 
-        type="email" 
+      <TextInput
+        id="email"
+        v-model="form.email"
+        type="email"
         class="pl-10 mt-1 block w-full"
-        placeholder="Ingrese su correo electrónico" 
-        autofocus 
-        autocomplete="email" 
+        placeholder="demo@sicel.mx"
+        autofocus
+        autocomplete="email"
       />
     </div>
   </div>
 
   <div class="mt-4">
-    <InputLabel for="password" value="Contraseña" />
+    <InputLabel for="password" value="Contraseña — demo1234" />
     <div class="relative">
       <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
         🔒
       </span>
-      <TextInput 
-        id="password" 
-        v-model="form.password" 
-        :type="showPassword ? 'text' : 'password'" 
+      <TextInput
+        id="password"
+        v-model="form.password"
+        :type="showPassword ? 'text' : 'password'"
         class="pl-10 mt-1 block w-full"
-        placeholder="Ingrese su contraseña" 
+        placeholder="demo1234"
       />
       <button
         type="button"
@@ -157,7 +167,7 @@ watchEffect(() => {
       <!-- Copyrigth -->
       <footer class="flex justify-center w-full h-fit py-3">
         <h5 class="text-black dark:text-white text-sm font-semibold transition-colors duration-300 ease-out">
-          © {{ new Date().getFullYear() }} - Universidad Internacional.
+          © {{ new Date().getFullYear() }} - SICEL CRM
         </h5>
       </footer>
     </section>

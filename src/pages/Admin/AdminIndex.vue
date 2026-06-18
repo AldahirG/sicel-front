@@ -1,11 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
-import { createSwapy } from "swapy";
+import { ref, computed, onMounted, watch } from "vue";
 import dashboardService from "../../services/dashboard.service";
 import ChartComponent from "../../components/ChartComponent.vue";
 
-const swapyInstance = ref(null);
-const container = ref(null);
 const isDarkMode = ref(localStorage.getItem("darkMode") === "true");
 
 // Función para alternar el modo oscuro y guardarlo en localStorage
@@ -76,29 +73,9 @@ const fetchDashboardData = async () => {
     totalBySchoolType.value = schoolType?.data?.data || [];
     totalByContactMedium.value = contactMedium?.data?.data || [];
 
-    updateAllTotals(); // Actualizar los totales después de cargar los datos
-
-    await nextTick();
-    initSwapy();
+    updateAllTotals();
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-  }
-};
-
-// Inicializar Swapy
-const initSwapy = () => {
-  if (swapyInstance.value) {
-    swapyInstance.value.destroy();
-  }
-
-  if (container.value) {
-    swapyInstance.value = createSwapy(container.value, {
-      animation: "dynamic",
-    });
-
-    swapyInstance.value.onSwap((event) => {
-      console.log("Swapy updated:", event.newSlotItemMap.asArray);
-    });
   }
 };
 
@@ -182,9 +159,6 @@ onMounted(async () => {
   await fetchDashboardData();
 });
 
-onUnmounted(() => {
-  swapyInstance.value?.destroy();
-});
 </script>
 
 <template>
@@ -197,91 +171,66 @@ onUnmounted(() => {
 
     <h1 class="text-2xl font-bold mb-6 text-center">Dashboard Admin</h1>
 
-    <!-- Contenedor principal del grid con Swapy -->
-    <div ref="container" class="grid">
-      <!-- Primera fila: 3 columnas -->
-      <div v-if="chartDataStatus.labels.length" data-swapy-slot="status" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="status">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Status</h2>
-          <ChartComponent :chartData="chartDataStatus" chartType="bar" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleStatus }}</p>
-        </div>
+    <!-- Grid de gráficas -->
+    <div class="grid">
+      <div v-if="chartDataStatus.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Status</h2>
+        <ChartComponent :chartData="chartDataStatus" chartType="bar" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleStatus }}</p>
       </div>
 
-      <div v-if="chartDataCycle.labels.length" data-swapy-slot="cycle" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="cycle">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Ciclo</h2>
-          <ChartComponent :chartData="chartDataCycle" chartType="pie" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleCycle }}</p>
-        </div>
+      <div v-if="chartDataCycle.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Ciclo</h2>
+        <ChartComponent :chartData="chartDataCycle" chartType="pie" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleCycle }}</p>
       </div>
 
-      <div v-if="chartDataCountry.labels.length" data-swapy-slot="country" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="country">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por País</h2>
-          <ChartComponent :chartData="chartDataCountry" chartType="bar" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleCountry }}</p>
-        </div>
+      <div v-if="chartDataCountry.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por País</h2>
+        <ChartComponent :chartData="chartDataCountry" chartType="bar" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleCountry }}</p>
       </div>
 
-      <!-- Segunda fila: 2 columnas -->
-      <div v-if="chartDataState.labels.length" data-swapy-slot="state" :class="['chart-container chart-wide', { dark: isDarkMode }]">
-        <div data-swapy-item="state">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Estado</h2>
-          <ChartComponent :chartData="chartDataState" chartType="line" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleState }}</p>
-        </div>
+      <div v-if="chartDataState.labels.length" :class="['chart-container chart-wide', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Estado</h2>
+        <ChartComponent :chartData="chartDataState" chartType="line" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleState }}</p>
       </div>
 
-      <div v-if="chartDataSemester.labels.length" data-swapy-slot="semester" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="semester">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Semestre</h2>
-          <ChartComponent :chartData="chartDataSemester" chartType="line" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleSemester }}</p>
-        </div>
+      <div v-if="chartDataSemester.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Semestre</h2>
+        <ChartComponent :chartData="chartDataSemester" chartType="line" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleSemester }}</p>
       </div>
 
-      <!-- Tercera fila: "Medio de Contacto" y "Tipo de Escuela" -->
-      <div v-if="chartDataContactMedium.labels.length" data-swapy-slot="contactMedium" :class="['chart-container chart-wide', { dark: isDarkMode }]">
-        <div data-swapy-item="contactMedium">
-          <h2 class="text-lg font-semibold text-center mb-2">Medio de Contacto</h2>
-          <ChartComponent :chartData="chartDataContactMedium" chartType="bar" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleContactMedium }}</p>
-        </div>
+      <div v-if="chartDataContactMedium.labels.length" :class="['chart-container chart-wide', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Medio de Contacto</h2>
+        <ChartComponent :chartData="chartDataContactMedium" chartType="bar" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleContactMedium }}</p>
       </div>
 
-      <div v-if="chartDataSchoolType.labels.length" data-swapy-slot="schoolType" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="schoolType">
-          <h2 class="text-lg font-semibold text-center mb-2">Tipo de Escuela</h2>
-          <ChartComponent :chartData="chartDataSchoolType" chartType="doughnut" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleSchoolType }}</p>
-        </div>
+      <div v-if="chartDataSchoolType.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Tipo de Escuela</h2>
+        <ChartComponent :chartData="chartDataSchoolType" chartType="doughnut" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleSchoolType }}</p>
       </div>
 
-      <!-- Última fila: 2 columnas -->
-      <div v-if="chartDataGrade.labels.length" data-swapy-slot="grade" :class="['chart-container', { dark: isDarkMode }]">
-        <div data-swapy-item="grade">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Grado</h2>
-          <ChartComponent :chartData="chartDataGrade" chartType="pie" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleGrade }}</p>
-        </div>
+      <div v-if="chartDataGrade.labels.length" :class="['chart-container', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Grado</h2>
+        <ChartComponent :chartData="chartDataGrade" chartType="pie" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleGrade }}</p>
       </div>
 
-      <div v-if="chartDataScholarship.labels.length" data-swapy-slot="scholarship" :class="['chart-container chart-wide', { dark: isDarkMode }]">
-        <div data-swapy-item="scholarship">
-          <h2 class="text-lg font-semibold text-center mb-2">Becas Ofertadas</h2>
-          <ChartComponent :chartData="chartDataScholarship" chartType="bar" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleScholarship }}</p>
-        </div>
+      <div v-if="chartDataScholarship.labels.length" :class="['chart-container chart-wide', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Becas Ofertadas</h2>
+        <ChartComponent :chartData="chartDataScholarship" chartType="bar" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleScholarship }}</p>
       </div>
 
-      <!-- Gráfica alargada al final -->
-      <div v-if="chartDataCity.labels.length" data-swapy-slot="city" :class="['chart-container chart-alargada', { dark: isDarkMode }]">
-        <div data-swapy-item="city">
-          <h2 class="text-lg font-semibold text-center mb-2">Total por Ciudad</h2>
-          <ChartComponent :chartData="chartDataCity" chartType="bar" :isDarkMode="isDarkMode" />
-          <p class="text-center mt-2">Total: {{ totalVisibleCity }}</p>
-        </div>
+      <div v-if="chartDataCity.labels.length" :class="['chart-container chart-alargada', { dark: isDarkMode }]">
+        <h2 class="text-lg font-semibold text-center mb-2">Total por Ciudad</h2>
+        <ChartComponent :chartData="chartDataCity" chartType="bar" :isDarkMode="isDarkMode" />
+        <p class="text-center mt-2">Total: {{ totalVisibleCity }}</p>
       </div>
     </div>
   </div>

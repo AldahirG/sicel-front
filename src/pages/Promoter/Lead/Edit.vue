@@ -71,36 +71,12 @@ const form = ref({
 });
 
 const personalUninterList = [
-  "ADRIAN MOLINA",
-  "ALEJANDRA RIVAS",
-  "ALDAHIR GOMEZ",
-  "ANALIT ROMAN ARCE",
-  "ANGELICA NIETO",
-  "AXEL ESPINOSA",
-  "BETSABE FLORES",
-  "BRYAN MURGA",
-  "CESAR SANTA OLALLA",
-  "CLAUDIA GALAN",
-  "EMMA ARRIAGA",
-  "ISIS CORTES",
-  "JAVIER DE JESUS",
-  "JAVIER ESPINOSA",
-  "JESUS GUZMAN",
-  "JESUS TRILLO",
-  "JORGE NARVAEZ",
-  "JOSE JAVIER DEL CASTILLO",
-  "KEREN GOMEZ",
-  "MARIAN SALGADO",
-  "MARCO SALGADO",
-  "MELYSSA MONROY",
-  "RAUL CASTILLEJA",
-  "THALIA SANCHEZ",
-  "XIMENA MARTINEZ",
-  "YOALI APARICIO",
-  "YANIN VAZQUEZ",
-]
-  .sort((a, b) => a.localeCompare(b))
-  .concat("NINGUNO DE LOS ANTERIORES");
+  "COLABORADOR A",
+  "COLABORADOR B",
+  "COLABORADOR C",
+  "COLABORADOR D",
+  "NINGUNO DE LOS ANTERIORES",
+];
 
 const isFormDisabled = computed(() => {
   return (
@@ -872,7 +848,7 @@ onMounted(async () => {
         label="Tipo de referido"
         name="type"
         placeholder="Selecciona un tipo de referido"
-        :options="['NINGUNO', 'ALUMNO', 'PERSONAL_UNINTER', 'FAMILIAR_ALUMNO']"
+        :options="[{ label: 'NINGUNO', value: 'NINGUNO' }, { label: 'ALUMNO', value: 'ALUMNO' }, { label: 'PERSONAL_INTERNO', value: 'PERSONAL_UNINTER' }, { label: 'FAMILIAR_ALUMNO', value: 'FAMILIAR_ALUMNO' }]"
         :disabled="isFormDisabled"
       />
 

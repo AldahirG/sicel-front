@@ -4,6 +4,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
 import SideBarLink from '../components/SideBarLink.vue';
+import DemoBanner from '../components/DemoBanner.vue';
 
 const route = useRoute();
 
@@ -60,15 +61,9 @@ watchEffect(() => {
             :class="is_expanded ? 'max-w-[200px]' : 'max-w-[calc(2rem+32px)]'"
             class="[grid-area:aside] fixed top-0 flex flex-col max-h-dvh p-[1rem] bg-primary-950 text-white z-50"
         >
-            <figure 
-                class="mb-[1rem] w-[2rem]"
-            >
-                <img 
-                    src="/logo-dashboard.png" 
-                    alt="Logo-Uninter" 
-                    class="rounded-full"
-                >
-            </figure>
+            <div class="mb-[1rem] w-[2rem] h-[2rem] flex items-center justify-center rounded-full bg-green-500">
+                <span class="text-white text-xs font-black">S</span>
+            </div>
 
             <div 
                 :class="is_expanded ? 'justify-end -top-12' : 'justify-center top-0'"
@@ -493,6 +488,8 @@ watchEffect(() => {
         >
             <RouterView />
         </main>
+
+        <DemoBanner />
     </div>
 </template>
 

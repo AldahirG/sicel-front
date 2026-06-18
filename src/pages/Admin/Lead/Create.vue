@@ -307,7 +307,7 @@ onMounted(async () => {
         :options="[
           'NINGUNO',
           'ALUMNO',
-          'PERSONAL_UNINTER',
+          'PERSONAL_INTERNO',
           'FAMILIAR_ALUMNO'
         ]"
       />

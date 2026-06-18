@@ -48,12 +48,8 @@ const form = ref({
 });
 
 const personalUninterList = [
-  "ADRIAN MOLINA", "ALEJANDRA RIVAS", "ALDAHIR GOMEZ", "ANALIT ROMAN ARCE", "ANGELICA NIETO",
-  "AXEL ESPINOSA", "BETSABE FLORES", "BRYAN MURGA", "CESAR SANTA OLALLA", "CLAUDIA GALAN",
-  "EMMA ARRIAGA", "ISIS CORTES", "JAVIER DE JESUS", "JAVIER ESPINOSA", "JESUS GUZMAN",
-  "JESUS TRILLO", "JORGE NARVAEZ", "JOSE JAVIER DEL CASTILLO", "KEREN GOMEZ", "MARIAN SALGADO",
-  "MARCO SALGADO", "MELYSSA MONROY", "RAUL CASTILLEJA", "THALIA SANCHEZ", "XIMENA MARTINEZ",
-  "YOALI APARICIO", "YANIN VAZQUEZ", "NINGUNO DE LOS ANTERIORES",
+  "COLABORADOR A", "COLABORADOR B", "COLABORADOR C", "COLABORADOR D",
+  "NINGUNO DE LOS ANTERIORES",
 ];
 
 // ** Validación y normalización de los campos **
@@ -389,7 +385,7 @@ const sortOptions = (arr, labelKey = 'label') => {
           { label: 'ALUMNO', value: 'ALUMNO' },
           { label: 'FAMILIAR_ALUMNO', value: 'FAMILIAR_ALUMNO' },
           { label: 'NINGUNO', value: 'NINGUNO' },
-          { label: 'PERSONAL_UNINTER', value: 'PERSONAL_UNINTER' }
+          { label: 'PERSONAL_INTERNO', value: 'PERSONAL_UNINTER' }
         ]"
       />
 
